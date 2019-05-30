@@ -548,28 +548,30 @@ impl<'a, 'tcx> LayoutCx<'tcx, TyCtxt<'a, 'tcx, 'tcx>> {
                         return Err(LayoutError::Unknown(ty));
                     }
                 }
+                if let Some(count) = count.assert_usize(tcx) {
+                    let element = self.layout_of(element)?;
+                    let size = element.size.checked_mul(count, dl)
+                        .ok_or(LayoutError::SizeOverflow(ty))?;
 
-                let element = self.layout_of(element)?;
-                let count = count.unwrap_usize(tcx);
-                let size = element.size.checked_mul(count, dl)
-                    .ok_or(LayoutError::SizeOverflow(ty))?;
+                    let abi = if count != 0 && ty.conservative_is_privately_uninhabited(tcx) {
+                        Abi::Uninhabited
+                    } else {
+                        Abi::Aggregate { sized: true }
+                    };
 
-                let abi = if count != 0 && ty.conservative_is_privately_uninhabited(tcx) {
-                    Abi::Uninhabited
+                    tcx.intern_layout(LayoutDetails {
+                        variants: Variants::Single { index: VariantIdx::new(0) },
+                        fields: FieldPlacement::Array {
+                            stride: element.size,
+                            count
+                        },
+                        abi,
+                        align: element.align,
+                        size
+                    })
                 } else {
-                    Abi::Aggregate { sized: true }
-                };
-
-                tcx.intern_layout(LayoutDetails {
-                    variants: Variants::Single { index: VariantIdx::new(0) },
-                    fields: FieldPlacement::Array {
-                        stride: element.size,
-                        count
-                    },
-                    abi,
-                    align: element.align,
-                    size
-                })
+                    return Err(LayoutError::Unknown(ty));
+                }
             }
             ty::Slice(element) => {
                 let element = self.layout_of(element)?;
