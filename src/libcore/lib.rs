@@ -74,6 +74,7 @@
 #![feature(concat_idents)]
 #![feature(const_fn)]
 #![feature(const_fn_union)]
+#![feature(const_generics)]
 #![feature(custom_attribute)]
 #![feature(doc_cfg)]
 #![feature(doc_spotlight)]
@@ -190,6 +191,7 @@ pub mod borrow;
 /* Core types and methods on primitives */
 
 pub mod any;
+#[cfg_attr(stage0, path = "array_stage0.rs")]
 pub mod array;
 pub mod ascii;
 pub mod sync;

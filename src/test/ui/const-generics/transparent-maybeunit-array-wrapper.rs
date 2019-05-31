@@ -3,9 +3,9 @@
 #![feature(const_generics)]
 //~^ WARN the feature `const_generics` is incomplete and may cause the compiler to crash
 
-use std::fmt::Debug;
+use std::mem::MaybeUninit;
 
-#[derive(Debug)]
-struct S<T: Debug, const N: usize>([T; N]);
+#[repr(transparent)]
+pub struct MaybeUninitWrapper<const N: usize>(MaybeUninit<[u64; N]>);
 
 fn main() {}
