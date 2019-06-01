@@ -11,6 +11,11 @@ bench = false
 doc = false
 
 [dependencies]
-core = { path = "../libcore" }
-libc = { version = "0.2", default-features = false }
-compiler_builtins = "0.1.0"
+#core = { path = "../libcore" }
+#libc = { version = "0.2", default-features = false }
+#compiler_builtins = "0.1.0"
+
+[dependencies.libc]
+git = "https://github.com/rust-wii/libc.git"
+branch = "wii"
+default-features = false
