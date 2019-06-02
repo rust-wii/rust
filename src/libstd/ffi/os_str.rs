@@ -4,7 +4,7 @@ use crate::ops;
 use crate::cmp;
 use crate::hash::{Hash, Hasher};
 use crate::rc::Rc;
-use crate::sync::Arc;
+//use crate::sync::Arc;
 
 use crate::sys::os_str::{Buf, Slice};
 use crate::sys_common::{AsInner, IntoInner, FromInner};
@@ -695,27 +695,27 @@ impl Clone for Box<OsStr> {
     }
 }
 
-#[stable(feature = "shared_from_slice2", since = "1.24.0")]
-impl From<OsString> for Arc<OsStr> {
-    /// Converts a [`OsString`] into a [`Arc`]`<OsStr>` without copying or allocating.
-    ///
-    /// [`Arc`]: ../sync/struct.Arc.html
-    /// [`OsString`]: ../ffi/struct.OsString.html
-    #[inline]
-    fn from(s: OsString) -> Arc<OsStr> {
-        let arc = s.inner.into_arc();
-        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const OsStr) }
-    }
-}
+// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
+// impl From<OsString> for Arc<OsStr> {
+//     /// Converts a [`OsString`] into a [`Arc`]`<OsStr>` without copying or allocating.
+//     ///
+//     /// [`Arc`]: ../sync/struct.Arc.html
+//     /// [`OsString`]: ../ffi/struct.OsString.html
+//     #[inline]
+//     fn from(s: OsString) -> Arc<OsStr> {
+//         let arc = s.inner.into_arc();
+//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const OsStr) }
+//     }
+// }
 
-#[stable(feature = "shared_from_slice2", since = "1.24.0")]
-impl From<&OsStr> for Arc<OsStr> {
-    #[inline]
-    fn from(s: &OsStr) -> Arc<OsStr> {
-        let arc = s.inner.into_arc();
-        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const OsStr) }
-    }
-}
+// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
+// impl From<&OsStr> for Arc<OsStr> {
+//     #[inline]
+//     fn from(s: &OsStr) -> Arc<OsStr> {
+//         let arc = s.inner.into_arc();
+//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const OsStr) }
+//     }
+// }
 
 #[stable(feature = "shared_from_slice2", since = "1.24.0")]
 impl From<OsString> for Rc<OsStr> {

@@ -243,7 +243,7 @@
 #![feature(cfg_target_has_atomic)]
 #![feature(cfg_target_thread_local)]
 #![feature(char_error_internals)]
-#![feature(checked_duration_since)]
+//#![feature(checked_duration_since)]
 #![feature(clamp)]
 #![feature(compiler_builtins_lib)]
 #![feature(concat_idents)]
@@ -315,7 +315,7 @@
 use prelude::v1::*;
 
 // Access to Bencher, etc.
-#[cfg(test)] extern crate test;
+// #[cfg(test)] extern crate test;
 
 // Re-export a few macros from core
 #[stable(feature = "rust1", since = "1.0.0")]
@@ -444,19 +444,19 @@ pub mod f64;
 pub mod thread;
 pub mod ascii;
 pub mod collections;
-pub mod env;
+//pub mod env;
 pub mod error;
 pub mod ffi;
-pub mod fs;
+//pub mod fs;
 pub mod io;
-pub mod net;
+//pub mod net;
 pub mod num;
-pub mod os;
-pub mod panic;
+//pub mod os;
+//pub mod panic;
 pub mod path;
-pub mod process;
+//pub mod process;
 pub mod sync;
-pub mod time;
+//pub mod time;
 
 #[stable(feature = "futures_api", since = "1.36.0")]
 pub mod task {
@@ -466,8 +466,8 @@ pub mod task {
     pub use core::task::*;
 }
 
-#[stable(feature = "futures_api", since = "1.36.0")]
-pub mod future;
+//#[stable(feature = "futures_api", since = "1.36.0")]
+//pub mod future;
 
 // Platform-abstraction modules
 #[macro_use]
@@ -477,12 +477,12 @@ mod sys;
 pub mod alloc;
 
 // Private support modules
-mod panicking;
+//mod panicking;
 mod memchr;
 
 // The runtime entry point and a few unstable public functions used by the
 // compiler
-pub mod rt;
+// pub mod rt;
 
 // Pull in the `std_detect` crate directly into libstd. The contents of
 // `std_detect` are in a different repository: rust-lang-nursery/stdsimd.
@@ -490,16 +490,16 @@ pub mod rt;
 // `std_detect` depends on libstd, but the contents of this module are
 // set up in such a way that directly pulling it here works such that the
 // crate uses the this crate as its libstd.
-#[path = "../stdsimd/crates/std_detect/src/mod.rs"]
-#[allow(missing_debug_implementations, missing_docs, dead_code)]
-#[unstable(feature = "stdsimd", issue = "48556")]
-#[cfg(not(test))]
-mod std_detect;
+// #[path = "../stdsimd/crates/std_detect/src/mod.rs"]
+// #[allow(missing_debug_implementations, missing_docs, dead_code)]
+// #[unstable(feature = "stdsimd", issue = "48556")]
+// #[cfg(not(test))]
+// mod std_detect;
 
-#[doc(hidden)]
-#[unstable(feature = "stdsimd", issue = "48556")]
-#[cfg(not(test))]
-pub use std_detect::detect;
+// #[doc(hidden)]
+// #[unstable(feature = "stdsimd", issue = "48556")]
+// #[cfg(not(test))]
+// pub use std_detect::detect;
 
 // Include a number of private modules that exist solely to provide
 // the rustdoc documentation for primitive types. Using `include!`

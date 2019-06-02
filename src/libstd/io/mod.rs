@@ -278,24 +278,24 @@ pub use self::cursor::Cursor;
 pub use self::error::{Result, Error, ErrorKind};
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use self::util::{copy, sink, Sink, empty, Empty, repeat, Repeat};
-#[stable(feature = "rust1", since = "1.0.0")]
-pub use self::stdio::{stdin, stdout, stderr, Stdin, Stdout, Stderr};
-#[stable(feature = "rust1", since = "1.0.0")]
-pub use self::stdio::{StdoutLock, StderrLock, StdinLock};
-#[unstable(feature = "print_internals", issue = "0")]
-pub use self::stdio::{_print, _eprint};
-#[unstable(feature = "libstd_io_internals", issue = "42788")]
-#[doc(no_inline, hidden)]
-pub use self::stdio::{set_panic, set_print};
+// #[stable(feature = "rust1", since = "1.0.0")]
+// pub use self::stdio::{stdin, stdout, stderr, Stdin, Stdout, Stderr};
+// #[stable(feature = "rust1", since = "1.0.0")]
+// pub use self::stdio::{StdoutLock, StderrLock, StdinLock};
+// #[unstable(feature = "print_internals", issue = "0")]
+// pub use self::stdio::{_print, _eprint};
+// #[unstable(feature = "libstd_io_internals", issue = "42788")]
+// #[doc(no_inline, hidden)]
+// pub use self::stdio::{set_panic, set_print};
 
 pub mod prelude;
 mod buffered;
 mod cursor;
 mod error;
 mod impls;
-mod lazy;
+//mod lazy;
 mod util;
-mod stdio;
+//mod stdio;
 
 const DEFAULT_BUF_SIZE: usize = crate::sys_common::io::DEFAULT_BUF_SIZE;
 

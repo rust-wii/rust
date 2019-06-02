@@ -208,41 +208,41 @@ pub struct HashMap<K, V, S = RandomState> {
     base: base::HashMap<K, V, S>,
 }
 
-impl<K: Hash + Eq, V> HashMap<K, V, RandomState> {
-    /// Creates an empty `HashMap`.
-    ///
-    /// The hash map is initially created with a capacity of 0, so it will not allocate until it
-    /// is first inserted into.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::collections::HashMap;
-    /// let mut map: HashMap<&str, i32> = HashMap::new();
-    /// ```
-    #[inline]
-    #[stable(feature = "rust1", since = "1.0.0")]
-    pub fn new() -> HashMap<K, V, RandomState> {
-        Default::default()
-    }
+// impl<K: Hash + Eq, V> HashMap<K, V, RandomState> {
+//     /// Creates an empty `HashMap`.
+//     ///
+//     /// The hash map is initially created with a capacity of 0, so it will not allocate until it
+//     /// is first inserted into.
+//     ///
+//     /// # Examples
+//     ///
+//     /// ```
+//     /// use std::collections::HashMap;
+//     /// let mut map: HashMap<&str, i32> = HashMap::new();
+//     /// ```
+//     /// #[inline]
+//     /// #[stable(feature = "rust1", since = "1.0.0")]
+//     /// pub fn new() -> HashMap<K, V, RandomState> {
+//     ///     Default::default()
+//     /// }
 
-    /// Creates an empty `HashMap` with the specified capacity.
-    ///
-    /// The hash map will be able to hold at least `capacity` elements without
-    /// reallocating. If `capacity` is 0, the hash map will not allocate.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::collections::HashMap;
-    /// let mut map: HashMap<&str, i32> = HashMap::with_capacity(10);
-    /// ```
-    #[inline]
-    #[stable(feature = "rust1", since = "1.0.0")]
-    pub fn with_capacity(capacity: usize) -> HashMap<K, V, RandomState> {
-        HashMap::with_capacity_and_hasher(capacity, Default::default())
-    }
-}
+//     /// Creates an empty `HashMap` with the specified capacity.
+//     ///
+//     /// The hash map will be able to hold at least `capacity` elements without
+//     /// reallocating. If `capacity` is 0, the hash map will not allocate.
+//     ///
+//     /// # Examples
+//     ///
+//     /// ```
+//     /// use std::collections::HashMap;
+//     /// let mut map: HashMap<&str, i32> = HashMap::with_capacity(10);
+//     /// ```
+//     /// #[inline]
+//     /// #[stable(feature = "rust1", since = "1.0.0")]
+//     /// pub fn with_capacity(capacity: usize) -> HashMap<K, V, RandomState> {
+//     ///     HashMap::with_capacity_and_hasher(capacity, Default::default())
+//     /// }
+// }
 
 impl<K, V, S> HashMap<K, V, S> {
     /// Returns the number of elements the map can hold without reallocating.
@@ -2419,43 +2419,44 @@ pub struct RandomState {
     k1: u64,
 }
 
-impl RandomState {
-    /// Constructs a new `RandomState` that is initialized with random keys.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::collections::hash_map::RandomState;
-    ///
-    /// let s = RandomState::new();
-    /// ```
-    #[inline]
-    #[allow(deprecated)]
-    // rand
-    #[stable(feature = "hashmap_build_hasher", since = "1.7.0")]
-    pub fn new() -> RandomState {
-        // Historically this function did not cache keys from the OS and instead
-        // simply always called `rand::thread_rng().gen()` twice. In #31356 it
-        // was discovered, however, that because we re-seed the thread-local RNG
-        // from the OS periodically that this can cause excessive slowdown when
-        // many hash maps are created on a thread. To solve this performance
-        // trap we cache the first set of randomly generated keys per-thread.
-        //
-        // Later in #36481 it was discovered that exposing a deterministic
-        // iteration order allows a form of DOS attack. To counter that we
-        // increment one of the seeds on every RandomState creation, giving
-        // every corresponding HashMap a different iteration order.
-        thread_local!(static KEYS: Cell<(u64, u64)> = {
-            Cell::new(sys::hashmap_random_keys())
-        });
-
-        KEYS.with(|keys| {
-            let (k0, k1) = keys.get();
-            keys.set((k0.wrapping_add(1), k1));
-            RandomState { k0: k0, k1: k1 }
-        })
-    }
-}
+// impl RandomState {
+//     /// Constructs a new `RandomState` that is initialized with random keys.
+//     ///
+//     /// # Examples
+//     ///
+//     /// ```
+//     /// use std::collections::hash_map::RandomState;
+//     ///
+//     /// let s = RandomState::new();
+//     /// ```
+//     /// #[inline]
+//     /// #[allow(deprecated)]
+//     /// // rand
+//     /// #[stable(feature = "hashmap_build_hasher", since = "1.7.0")]
+//     /// pub fn new() -> RandomState {
+//     ///     // Historically this function did not cache keys from the OS and instead
+//     ///     // simply always called `rand::thread_rng().gen()` twice. In #31356 it
+//     ///     // was discovered, however, that because we re-seed the thread-local RNG
+//     ///     // from the OS periodically that this can cause excessive slowdown when
+//     ///     // many hash maps are created on a thread. To solve this performance
+//     ///    // trap we cache the first set of randomly generated keys per-thread.
+//     ///    //
+//     ///     // Later in #36481 it was discovered that exposing a deterministic
+//     ///     // iteration order allows a form of DOS attack. To counter that we
+//     ///     // increment one of the seeds on every RandomState creation, giving
+//     ///     // every corresponding HashMap a different iteration order.
+//     ///     thread_local!(static KEYS: Cell<(u64, u64)> = {
+//     ///         Cell::new(sys::hashmap_random_keys())
+//     ///     });
+//     ///
+//     ///    KEYS.with(|keys| {
+//     ///         let (k0, k1) = keys.get();
+//     ///         keys.set((k0.wrapping_add(1), k1));
+//     ///         RandomState { k0: k0, k1: k1 }
+//     ///     })
+//     /// }
+//     ///
+// }
 
 #[stable(feature = "hashmap_build_hasher", since = "1.7.0")]
 impl BuildHasher for RandomState {
@@ -2517,14 +2518,14 @@ impl Hasher for DefaultHasher {
     }
 }
 
-#[stable(feature = "hashmap_build_hasher", since = "1.7.0")]
-impl Default for RandomState {
-    /// Constructs a new `RandomState`.
-    #[inline]
-    fn default() -> RandomState {
-        RandomState::new()
-    }
-}
+// #[stable(feature = "hashmap_build_hasher", since = "1.7.0")]
+// impl Default for RandomState {
+//     /// Constructs a new `RandomState`.
+//     #[inline]
+//     fn default() -> RandomState {
+//         RandomState::new()
+//     }
+// }
 
 #[stable(feature = "std_debug", since = "1.16.0")]
 impl fmt::Debug for RandomState {

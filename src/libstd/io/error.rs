@@ -274,10 +274,10 @@ impl Error {
     ///
     /// println!("last OS error: {:?}", Error::last_os_error());
     /// ```
-    #[stable(feature = "rust1", since = "1.0.0")]
-    pub fn last_os_error() -> Error {
-        Error::from_raw_os_error(sys::os::errno() as i32)
-    }
+    /// #[stable(feature = "rust1", since = "1.0.0")]
+    /// pub fn last_os_error() -> Error {
+    ///     Error::from_raw_os_error(sys::os::errno() as i32)
+    /// }
 
     /// Creates a new instance of an `Error` from a particular OS error code.
     ///
@@ -517,8 +517,8 @@ impl fmt::Debug for Repr {
             Repr::Os(code) =>
                 fmt.debug_struct("Os")
                     .field("code", &code)
-                    .field("kind", &sys::decode_error_kind(code))
-                    .field("message", &sys::os::error_string(code)).finish(),
+                    .field("kind", &sys::decode_error_kind(code)).finish(),
+                    //.field("message", &sys::os::error_string(code)).finish(),
             Repr::Custom(ref c) => fmt::Debug::fmt(&c, fmt),
             Repr::Simple(kind) => fmt.debug_tuple("Kind").field(&kind).finish(),
         }
@@ -530,7 +530,8 @@ impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.repr {
             Repr::Os(code) => {
-                let detail = sys::os::error_string(code);
+                //sys::os::error_string(code)
+                let detail = "";
                 write!(fmt, "{} (os error {})", detail, code)
             }
             Repr::Custom(ref c) => c.error.fmt(fmt),

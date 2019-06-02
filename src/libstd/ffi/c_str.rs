@@ -7,12 +7,12 @@ use crate::io;
 use crate::mem;
 use crate::memchr;
 use crate::ops;
-use crate::os::raw::c_char;
+//use crate::os::raw::c_char;
 use crate::ptr;
 use crate::rc::Rc;
 use crate::slice;
 use crate::str::{self, Utf8Error};
-use crate::sync::Arc;
+//use crate::sync::Arc;
 use crate::sys;
 
 /// A type representing an owned, C-compatible, nul-terminated string with no nul bytes in the
@@ -200,7 +200,7 @@ pub struct CStr {
     //        just a raw `c_char` along with some form of marker to make
     //        this an unsized type. Essentially `sizeof(&CStr)` should be the
     //        same as `sizeof(&c_char)` but `CStr` should be an unsized type.
-    inner: [c_char]
+    inner: [libc::c_char]
 }
 
 /// An error indicating that an interior nul byte was found.
@@ -398,10 +398,10 @@ impl CString {
     /// }
     /// ```
     #[stable(feature = "cstr_memory", since = "1.4.0")]
-    pub unsafe fn from_raw(ptr: *mut c_char) -> CString {
+    pub unsafe fn from_raw(ptr: *mut libc::c_char) -> CString {
         let len = sys::strlen(ptr) + 1; // Including the NUL byte
         let slice = slice::from_raw_parts_mut(ptr, len as usize);
-        CString { inner: Box::from_raw(slice as *mut [c_char] as *mut [u8]) }
+        CString { inner: Box::from_raw(slice as *mut [libc::c_char] as *mut [u8]) }
     }
 
     /// Consumes the `CString` and transfers ownership of the string to a C caller.
@@ -436,8 +436,8 @@ impl CString {
     /// ```
     #[inline]
     #[stable(feature = "cstr_memory", since = "1.4.0")]
-    pub fn into_raw(self) -> *mut c_char {
-        Box::into_raw(self.into_inner()) as *mut c_char
+    pub fn into_raw(self) -> *mut libc::c_char {
+        Box::into_raw(self.into_inner()) as *mut libc::c_char
     }
 
     /// Converts the `CString` into a [`String`] if it contains valid UTF-8 data.
@@ -663,7 +663,7 @@ impl fmt::Debug for CStr {
 #[stable(feature = "cstr_default", since = "1.10.0")]
 impl Default for &CStr {
     fn default() -> Self {
-        const SLICE: &[c_char] = &[0];
+        const SLICE: &[libc::c_char] = &[0];
         unsafe { CStr::from_ptr(SLICE.as_ptr()) }
     }
 }
@@ -755,27 +755,27 @@ impl<'a> From<&'a CString> for Cow<'a, CStr> {
     }
 }
 
-#[stable(feature = "shared_from_slice2", since = "1.24.0")]
-impl From<CString> for Arc<CStr> {
-    /// Converts a [`CString`] into a [`Arc`]`<CStr>` without copying or allocating.
-    ///
-    /// [`CString`]: ../ffi/struct.CString.html
-    /// [`Arc`]: ../sync/struct.Arc.html
-    #[inline]
-    fn from(s: CString) -> Arc<CStr> {
-        let arc: Arc<[u8]> = Arc::from(s.into_inner());
-        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
-    }
-}
+// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
+// impl From<CString> for Arc<CStr> {
+//     /// Converts a [`CString`] into a [`Arc`]`<CStr>` without copying or allocating.
+//     ///
+//     /// [`CString`]: ../ffi/struct.CString.html
+//     /// [`Arc`]: ../sync/struct.Arc.html
+//     #[inline]
+//     fn from(s: CString) -> Arc<CStr> {
+//         let arc: Arc<[u8]> = Arc::from(s.into_inner());
+//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
+//     }
+// }
 
-#[stable(feature = "shared_from_slice2", since = "1.24.0")]
-impl From<&CStr> for Arc<CStr> {
-    #[inline]
-    fn from(s: &CStr) -> Arc<CStr> {
-        let arc: Arc<[u8]> = Arc::from(s.to_bytes_with_nul());
-        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
-    }
-}
+// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
+// impl From<&CStr> for Arc<CStr> {
+//     #[inline]
+//     fn from(s: &CStr) -> Arc<CStr> {
+//         let arc: Arc<[u8]> = Arc::from(s.to_bytes_with_nul());
+//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
+//     }
+// }
 
 #[stable(feature = "shared_from_slice2", since = "1.24.0")]
 impl From<CString> for Rc<CStr> {
@@ -961,7 +961,7 @@ impl CStr {
     /// # }
     /// ```
     #[stable(feature = "rust1", since = "1.0.0")]
-    pub unsafe fn from_ptr<'a>(ptr: *const c_char) -> &'a CStr {
+    pub unsafe fn from_ptr<'a>(ptr: *const libc::c_char) -> &'a CStr {
         let len = sys::strlen(ptr);
         let ptr = ptr as *const u8;
         CStr::from_bytes_with_nul_unchecked(slice::from_raw_parts(ptr, len as usize + 1))
@@ -1086,7 +1086,7 @@ impl CStr {
     /// [`CString`]: struct.CString.html
     #[inline]
     #[stable(feature = "rust1", since = "1.0.0")]
-    pub const fn as_ptr(&self) -> *const c_char {
+    pub const fn as_ptr(&self) -> *const libc::c_char {
         self.inner.as_ptr()
     }
 
@@ -1136,7 +1136,7 @@ impl CStr {
     #[inline]
     #[stable(feature = "rust1", since = "1.0.0")]
     pub fn to_bytes_with_nul(&self) -> &[u8] {
-        unsafe { &*(&self.inner as *const [c_char] as *const [u8]) }
+        unsafe { &*(&self.inner as *const [libc::c_char] as *const [u8]) }
     }
 
     /// Yields a [`&str`] slice if the `CStr` contains valid UTF-8.

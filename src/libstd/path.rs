@@ -73,14 +73,14 @@ use crate::borrow::{Borrow, Cow};
 use crate::cmp;
 use crate::error::Error;
 use crate::fmt;
-use crate::fs;
+//use crate::fs;
 use crate::hash::{Hash, Hasher};
 use crate::io;
 use crate::iter::{self, FusedIterator};
 use crate::ops::{self, Deref};
 use crate::rc::Rc;
 use crate::str::FromStr;
-use crate::sync::Arc;
+//use crate::sync::Arc;
 
 use crate::ffi::{OsStr, OsString};
 
@@ -1619,25 +1619,25 @@ impl<'a> From<Cow<'a, Path>> for PathBuf {
     }
 }
 
-#[stable(feature = "shared_from_slice2", since = "1.24.0")]
-impl From<PathBuf> for Arc<Path> {
-    /// Converts a Path into a Rc by copying the Path data into a new Rc buffer.
-    #[inline]
-    fn from(s: PathBuf) -> Arc<Path> {
-        let arc: Arc<OsStr> = Arc::from(s.into_os_string());
-        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const Path) }
-    }
-}
+// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
+// impl From<PathBuf> for Arc<Path> {
+//     /// Converts a Path into a Rc by copying the Path data into a new Rc buffer.
+//     #[inline]
+//     fn from(s: PathBuf) -> Arc<Path> {
+//         let arc: Arc<OsStr> = Arc::from(s.into_os_string());
+//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const Path) }
+//     }
+// }
 
-#[stable(feature = "shared_from_slice2", since = "1.24.0")]
-impl From<&Path> for Arc<Path> {
-    /// Converts a Path into a Rc by copying the Path data into a new Rc buffer.
-    #[inline]
-    fn from(s: &Path) -> Arc<Path> {
-        let arc: Arc<OsStr> = Arc::from(s.as_os_str());
-        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const Path) }
-    }
-}
+// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
+// impl From<&Path> for Arc<Path> {
+//     /// Converts a Path into a Rc by copying the Path data into a new Rc buffer.
+//     #[inline]
+//     fn from(s: &Path) -> Arc<Path> {
+//         let arc: Arc<OsStr> = Arc::from(s.as_os_str());
+//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const Path) }
+//     }
+// }
 
 #[stable(feature = "shared_from_slice2", since = "1.24.0")]
 impl From<PathBuf> for Rc<Path> {
@@ -2380,10 +2380,10 @@ impl Path {
     /// let metadata = path.metadata().expect("metadata call failed");
     /// println!("{:?}", metadata.file_type());
     /// ```
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn metadata(&self) -> io::Result<fs::Metadata> {
-        fs::metadata(self)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn metadata(&self) -> io::Result<fs::Metadata> {
+    //     fs::metadata(self)
+    // }
 
     /// Queries the metadata about a file without following symlinks.
     ///
@@ -2400,10 +2400,10 @@ impl Path {
     /// let metadata = path.symlink_metadata().expect("symlink_metadata call failed");
     /// println!("{:?}", metadata.file_type());
     /// ```
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn symlink_metadata(&self) -> io::Result<fs::Metadata> {
-        fs::symlink_metadata(self)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn symlink_metadata(&self) -> io::Result<fs::Metadata> {
+    //     fs::symlink_metadata(self)
+    // }
 
     /// Returns the canonical, absolute form of the path with all intermediate
     /// components normalized and symbolic links resolved.
@@ -2420,10 +2420,10 @@ impl Path {
     /// let path = Path::new("/foo/test/../test/bar.rs");
     /// assert_eq!(path.canonicalize().unwrap(), PathBuf::from("/foo/test/bar.rs"));
     /// ```
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn canonicalize(&self) -> io::Result<PathBuf> {
-        fs::canonicalize(self)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn canonicalize(&self) -> io::Result<PathBuf> {
+    //     fs::canonicalize(self)
+    // }
 
     /// Reads a symbolic link, returning the file that the link points to.
     ///
@@ -2439,10 +2439,10 @@ impl Path {
     /// let path = Path::new("/laputa/sky_castle.rs");
     /// let path_link = path.read_link().expect("read_link call failed");
     /// ```
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn read_link(&self) -> io::Result<PathBuf> {
-        fs::read_link(self)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn read_link(&self) -> io::Result<PathBuf> {
+    //     fs::read_link(self)
+    // }
 
     /// Returns an iterator over the entries within a directory.
     ///
@@ -2467,10 +2467,10 @@ impl Path {
     ///     }
     /// }
     /// ```
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn read_dir(&self) -> io::Result<fs::ReadDir> {
-        fs::read_dir(self)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn read_dir(&self) -> io::Result<fs::ReadDir> {
+    //     fs::read_dir(self)
+    // }
 
     /// Returns `true` if the path points at an existing entity.
     ///
@@ -2493,10 +2493,10 @@ impl Path {
     /// check errors, call [fs::metadata].
     ///
     /// [fs::metadata]: ../../std/fs/fn.metadata.html
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn exists(&self) -> bool {
-        fs::metadata(self).is_ok()
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn exists(&self) -> bool {
+    //     fs::metadata(self).is_ok()
+    // }
 
     /// Returns `true` if the path exists on disk and is pointing at a regular file.
     ///
@@ -2522,10 +2522,10 @@ impl Path {
     ///
     /// [fs::metadata]: ../../std/fs/fn.metadata.html
     /// [fs::Metadata::is_file]: ../../std/fs/struct.Metadata.html#method.is_file
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn is_file(&self) -> bool {
-        fs::metadata(self).map(|m| m.is_file()).unwrap_or(false)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn is_file(&self) -> bool {
+    //     fs::metadata(self).map(|m| m.is_file()).unwrap_or(false)
+    // }
 
     /// Returns `true` if the path exists on disk and is pointing at a directory.
     ///
@@ -2551,10 +2551,10 @@ impl Path {
     ///
     /// [fs::metadata]: ../../std/fs/fn.metadata.html
     /// [fs::Metadata::is_dir]: ../../std/fs/struct.Metadata.html#method.is_dir
-    #[stable(feature = "path_ext", since = "1.5.0")]
-    pub fn is_dir(&self) -> bool {
-        fs::metadata(self).map(|m| m.is_dir()).unwrap_or(false)
-    }
+    // #[stable(feature = "path_ext", since = "1.5.0")]
+    // pub fn is_dir(&self) -> bool {
+    //     fs::metadata(self).map(|m| m.is_dir()).unwrap_or(false)
+    // }
 
     /// Converts a [`Box<Path>`][`Box`] into a [`PathBuf`] without copying or
     /// allocating.

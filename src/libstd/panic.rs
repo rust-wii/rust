@@ -5,15 +5,15 @@
 use crate::any::Any;
 use crate::cell::UnsafeCell;
 use crate::fmt;
-use crate::future::Future;
+//use crate::future::Future;
 use crate::pin::Pin;
 use crate::ops::{Deref, DerefMut};
 use crate::panicking;
 use crate::ptr::{Unique, NonNull};
 use crate::rc::Rc;
-use crate::sync::{Arc, Mutex, RwLock, atomic};
+//use crate::sync::{Arc, Mutex, RwLock, atomic};
 use crate::task::{Context, Poll};
-use crate::thread::Result;
+//use crate::thread::Result;
 
 #[stable(feature = "panic_hooks", since = "1.10.0")]
 pub use crate::panicking::{take_hook, set_hook};

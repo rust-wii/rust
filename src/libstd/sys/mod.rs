@@ -23,7 +23,10 @@
 #![allow(missing_debug_implementations)]
 
 cfg_if! {
-    if #[cfg(unix)] {
+    if #[cfg(target_os = "rvl-ios")] {
+        mod rvl_ios;
+        pub use self::rvl_ios::*;
+    } else if #[cfg(unix)] {
         mod unix;
         pub use self::unix::*;
     } else if #[cfg(windows)] {

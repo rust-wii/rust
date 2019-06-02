@@ -112,42 +112,43 @@ pub struct HashSet<T, S = RandomState> {
     map: HashMap<T, (), S>,
 }
 
-impl<T: Hash + Eq> HashSet<T, RandomState> {
-    /// Creates an empty `HashSet`.
-    ///
-    /// The hash set is initially created with a capacity of 0, so it will not allocate until it
-    /// is first inserted into.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::collections::HashSet;
-    /// let set: HashSet<i32> = HashSet::new();
-    /// ```
-    #[inline]
-    #[stable(feature = "rust1", since = "1.0.0")]
-    pub fn new() -> HashSet<T, RandomState> {
-        HashSet { map: HashMap::new() }
-    }
+// impl<T: Hash + Eq> HashSet<T, RandomState> {
+//     /// Creates an empty `HashSet`.
+//     ///
+//     /// The hash set is initially created with a capacity of 0, so it will not allocate until it
+//     /// is first inserted into.
+//     ///
+//     /// # Examples
+//     ///
+//     /// ```
+//     /// use std::collections::HashSet;
+//     /// let set: HashSet<i32> = HashSet::new();
+//     /// ```
+//     /// #[inline]
+//     /// #[stable(feature = "rust1", since = "1.0.0")]
+//     /// pub fn new() -> HashSet<T, RandomState> {
+//     ///     HashSet { map: HashMap::new() }
+//     /// }
 
-    /// Creates an empty `HashSet` with the specified capacity.
-    ///
-    /// The hash set will be able to hold at least `capacity` elements without
-    /// reallocating. If `capacity` is 0, the hash set will not allocate.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::collections::HashSet;
-    /// let set: HashSet<i32> = HashSet::with_capacity(10);
-    /// assert!(set.capacity() >= 10);
-    /// ```
-    #[inline]
-    #[stable(feature = "rust1", since = "1.0.0")]
-    pub fn with_capacity(capacity: usize) -> HashSet<T, RandomState> {
-        HashSet { map: HashMap::with_capacity(capacity) }
-    }
-}
+//     /// Creates an empty `HashSet` with the specified capacity.
+//     ///
+//     /// The hash set will be able to hold at least `capacity` elements without
+//     /// reallocating. If `capacity` is 0, the hash set will not allocate.
+//     ///
+//     /// # Examples
+//     ///
+//     /// ```
+//     /// use std::collections::HashSet;
+//     /// let set: HashSet<i32> = HashSet::with_capacity(10);
+//     /// assert!(set.capacity() >= 10);
+//     /// ```
+//     /// #[inline]
+//     /// #[stable(feature = "rust1", since = "1.0.0")]
+//     /// pub fn with_capacity(capacity: usize) -> HashSet<T, RandomState> {
+//     ///     HashSet { map: HashMap::with_capacity(capacity) }
+//     /// }
+//     ///
+// }
 
 impl<T, S> HashSet<T, S> {
     /// Returns the number of elements the set can hold without reallocating.

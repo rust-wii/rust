@@ -19,7 +19,7 @@ use crate::fmt;
 use crate::io;
 use crate::path::{Path, PathBuf};
 use crate::sys;
-use crate::sys::os as os_imp;
+//use crate::sys::os as os_imp;
 
 /// Returns the current working directory as a [`PathBuf`].
 ///
@@ -45,10 +45,10 @@ use crate::sys::os as os_imp;
 ///     Ok(())
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn current_dir() -> io::Result<PathBuf> {
-    os_imp::getcwd()
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn current_dir() -> io::Result<PathBuf> {
+//     os_imp::getcwd()
+// }
 
 /// Changes the current working directory to the specified path.
 ///
@@ -66,10 +66,10 @@ pub fn current_dir() -> io::Result<PathBuf> {
 /// assert!(env::set_current_dir(&root).is_ok());
 /// println!("Successfully changed working directory to {}!", root.display());
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn set_current_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
-    os_imp::chdir(path.as_ref())
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn set_current_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
+//     os_imp::chdir(path.as_ref())
+// }
 
 /// An iterator over a snapshot of the environment variables of this process.
 ///
@@ -808,7 +808,7 @@ impl fmt::Debug for ArgsOs {
 /// Constants associated with the current target
 #[stable(feature = "env", since = "1.0.0")]
 pub mod consts {
-    use crate::sys::env::os;
+    //use crate::sys::env::os;
 
     /// A string describing the architecture of the CPU that is currently
     /// in use.
@@ -852,8 +852,8 @@ pub mod consts {
     /// - solaris
     /// - android
     /// - windows
-    #[stable(feature = "env", since = "1.0.0")]
-    pub const OS: &str = os::OS;
+    //#[stable(feature = "env", since = "1.0.0")]
+    //pub const OS: &str = os::OS;
 
     /// Specifies the filename prefix used for shared libraries on this
     /// platform. Example value is `lib`.
@@ -862,8 +862,8 @@ pub mod consts {
     ///
     /// - lib
     /// - `""` (an empty string)
-    #[stable(feature = "env", since = "1.0.0")]
-    pub const DLL_PREFIX: &str = os::DLL_PREFIX;
+    //#[stable(feature = "env", since = "1.0.0")]
+    //pub const DLL_PREFIX: &str = os::DLL_PREFIX;
 
     /// Specifies the filename suffix used for shared libraries on this
     /// platform. Example value is `.so`.
@@ -873,8 +873,8 @@ pub mod consts {
     /// - .so
     /// - .dylib
     /// - .dll
-    #[stable(feature = "env", since = "1.0.0")]
-    pub const DLL_SUFFIX: &str = os::DLL_SUFFIX;
+    //#[stable(feature = "env", since = "1.0.0")]
+    //pub const DLL_SUFFIX: &str = os::DLL_SUFFIX;
 
     /// Specifies the file extension used for shared libraries on this
     /// platform that goes after the dot. Example value is `so`.
@@ -884,8 +884,8 @@ pub mod consts {
     /// - so
     /// - dylib
     /// - dll
-    #[stable(feature = "env", since = "1.0.0")]
-    pub const DLL_EXTENSION: &str = os::DLL_EXTENSION;
+    //#[stable(feature = "env", since = "1.0.0")]
+    //pub const DLL_EXTENSION: &str = os::DLL_EXTENSION;
 
     /// Specifies the filename suffix used for executable binaries on this
     /// platform. Example value is `.exe`.
@@ -896,8 +896,8 @@ pub mod consts {
     /// - .nexe
     /// - .pexe
     /// - `""` (an empty string)
-    #[stable(feature = "env", since = "1.0.0")]
-    pub const EXE_SUFFIX: &str = os::EXE_SUFFIX;
+    //#[stable(feature = "env", since = "1.0.0")]
+    //pub const EXE_SUFFIX: &str = os::EXE_SUFFIX;
 
     /// Specifies the file extension, if any, used for executable binaries
     /// on this platform. Example value is `exe`.
@@ -906,8 +906,8 @@ pub mod consts {
     ///
     /// - exe
     /// - `""` (an empty string)
-    #[stable(feature = "env", since = "1.0.0")]
-    pub const EXE_EXTENSION: &str = os::EXE_EXTENSION;
+    //#[stable(feature = "env", since = "1.0.0")]
+    //pub const EXE_EXTENSION: &str = os::EXE_EXTENSION;
 }
 
 #[cfg(target_arch = "x86")]

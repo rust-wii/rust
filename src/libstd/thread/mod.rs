@@ -673,7 +673,8 @@ pub fn current() -> Thread {
 /// [`Condvar`]: ../../std/sync/struct.Condvar.html
 #[stable(feature = "rust1", since = "1.0.0")]
 pub fn yield_now() {
-    imp::Thread::yield_now()
+    unimplemented!()
+    //imp::Thread::yield_now()
 }
 
 /// Determines whether the current thread is unwinding because of panic.
@@ -721,7 +722,8 @@ pub fn yield_now() {
 #[inline]
 #[stable(feature = "rust1", since = "1.0.0")]
 pub fn panicking() -> bool {
-    panicking::panicking()
+    unimplemented!()
+    //panicking::panicking()
 }
 
 /// Puts the current thread to sleep for at least the specified amount of time.
@@ -747,7 +749,8 @@ pub fn panicking() -> bool {
 #[stable(feature = "rust1", since = "1.0.0")]
 #[rustc_deprecated(since = "1.6.0", reason = "replaced by `std::thread::sleep`")]
 pub fn sleep_ms(ms: u32) {
-    sleep(Duration::from_millis(ms as u64))
+    unimplemented!()
+    //sleep(Duration::from_millis(ms as u64))
 }
 
 /// Puts the current thread to sleep for at least the specified amount of time.
@@ -778,7 +781,8 @@ pub fn sleep_ms(ms: u32) {
 /// ```
 #[stable(feature = "thread_sleep", since = "1.4.0")]
 pub fn sleep(dur: Duration) {
-    imp::Thread::sleep(dur)
+    unimplemented!()
+    //imp::Thread::sleep(dur)
 }
 
 // constants for park/unpark
@@ -934,7 +938,8 @@ pub fn park() {
 #[stable(feature = "rust1", since = "1.0.0")]
 #[rustc_deprecated(since = "1.6.0", reason = "replaced by `std::thread::park_timeout`")]
 pub fn park_timeout_ms(ms: u32) {
-    park_timeout(Duration::from_millis(ms as u64))
+    unimplemented!()
+    //park_timeout(Duration::from_millis(ms as u64))
 }
 
 /// Blocks unless or until the current thread's token is made available or

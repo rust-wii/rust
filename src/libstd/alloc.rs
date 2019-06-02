@@ -65,7 +65,7 @@ use core::sync::atomic::{AtomicPtr, Ordering};
 use core::{mem, ptr};
 use core::ptr::NonNull;
 
-use crate::sys_common::util::dumb_print;
+//use crate::sys_common::util::dumb_print;
 
 #[stable(feature = "alloc_module", since = "1.28.0")]
 #[doc(inline)]
@@ -199,7 +199,7 @@ pub fn take_alloc_error_hook() -> fn(Layout) {
 }
 
 fn default_alloc_error_hook(layout: Layout) {
-    dumb_print(format_args!("memory allocation of {} bytes failed", layout.size()));
+    //dumb_print(format_args!("memory allocation of {} bytes failed", layout.size()));
 }
 
 #[cfg(not(test))]
