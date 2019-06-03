@@ -7,12 +7,12 @@ use crate::io;
 use crate::mem;
 use crate::memchr;
 use crate::ops;
-//use crate::os::raw::c_char;
+use crate::os::raw::c_char;
 use crate::ptr;
 use crate::rc::Rc;
 use crate::slice;
 use crate::str::{self, Utf8Error};
-//use crate::sync::Arc;
+use crate::sync::Arc;
 use crate::sys;
 
 /// A type representing an owned, C-compatible, nul-terminated string with no nul bytes in the
@@ -755,27 +755,27 @@ impl<'a> From<&'a CString> for Cow<'a, CStr> {
     }
 }
 
-// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
-// impl From<CString> for Arc<CStr> {
-//     /// Converts a [`CString`] into a [`Arc`]`<CStr>` without copying or allocating.
-//     ///
-//     /// [`CString`]: ../ffi/struct.CString.html
-//     /// [`Arc`]: ../sync/struct.Arc.html
-//     #[inline]
-//     fn from(s: CString) -> Arc<CStr> {
-//         let arc: Arc<[u8]> = Arc::from(s.into_inner());
-//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
-//     }
-// }
+#[stable(feature = "shared_from_slice2", since = "1.24.0")]
+impl From<CString> for Arc<CStr> {
+    /// Converts a [`CString`] into a [`Arc`]`<CStr>` without copying or allocating.
+    ///
+    /// [`CString`]: ../ffi/struct.CString.html
+    /// [`Arc`]: ../sync/struct.Arc.html
+    #[inline]
+    fn from(s: CString) -> Arc<CStr> {
+        let arc: Arc<[u8]> = Arc::from(s.into_inner());
+        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
+    }
+}
 
-// #[stable(feature = "shared_from_slice2", since = "1.24.0")]
-// impl From<&CStr> for Arc<CStr> {
-//     #[inline]
-//     fn from(s: &CStr) -> Arc<CStr> {
-//         let arc: Arc<[u8]> = Arc::from(s.to_bytes_with_nul());
-//         unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
-//     }
-// }
+#[stable(feature = "shared_from_slice2", since = "1.24.0")]
+impl From<&CStr> for Arc<CStr> {
+    #[inline]
+    fn from(s: &CStr) -> Arc<CStr> {
+        let arc: Arc<[u8]> = Arc::from(s.to_bytes_with_nul());
+        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const CStr) }
+    }
+}
 
 #[stable(feature = "shared_from_slice2", since = "1.24.0")]
 impl From<CString> for Rc<CStr> {

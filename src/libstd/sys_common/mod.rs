@@ -15,7 +15,7 @@
 #![allow(missing_docs)]
 #![allow(missing_debug_implementations)]
 
-//use crate::sync::Once;
+use crate::sync::Once;
 use crate::sys;
 
 macro_rules! rtabort {
@@ -40,12 +40,12 @@ macro_rules! rtunwrap {
 }
 
 pub mod alloc;
-//pub mod at_exit_imp;
+pub mod at_exit_imp;
 #[cfg(feature = "backtrace")]
 pub mod backtrace;
-//pub mod condvar;
+pub mod condvar;
 pub mod io;
-//pub mod mutex;
+pub mod mutex;
 #[cfg(any(rustdoc, // see `mod os`, docs are generated for multiple platforms
           unix,
           target_os = "redox",
@@ -54,12 +54,12 @@ pub mod io;
           all(target_vendor = "fortanix", target_env = "sgx")))]
 pub mod os_str_bytes;
 pub mod poison;
-//pub mod remutex;
+pub mod remutex;
 pub mod rwlock;
-//pub mod thread;
-//pub mod thread_info;
-//pub mod thread_local;
-//pub mod util;
+pub mod thread;
+pub mod thread_info;
+pub mod thread_local;
+pub mod util;
 //pub mod wtf8;
 pub mod bytestring;
 //pub mod process;
@@ -113,19 +113,19 @@ pub trait FromInner<Inner> {
 /// closure will be run once the main thread exits. Returns `Err` to indicate
 /// that the closure could not be registered, meaning that it is not scheduled
 /// to be run.
-// pub fn at_exit<F: FnOnce() + Send + 'static>(f: F) -> Result<(), ()> {
-//     if at_exit_imp::push(Box::new(f)) {Ok(())} else {Err(())}
-// }
+pub fn at_exit<F: FnOnce() + Send + 'static>(f: F) -> Result<(), ()> {
+    if at_exit_imp::push(Box::new(f)) {Ok(())} else {Err(())}
+}
 
 /// One-time runtime cleanup.
-// pub fn cleanup() {
-//     static CLEANUP: Once = Once::new();
-//     CLEANUP.call_once(|| unsafe {
-//         sys::args::cleanup();
-//         sys::stack_overflow::cleanup();
-//         at_exit_imp::cleanup();
-//     });
-// }
+pub fn cleanup() {
+    static CLEANUP: Once = Once::new();
+    CLEANUP.call_once(|| unsafe {
+        sys::args::cleanup();
+        sys::stack_overflow::cleanup();
+        at_exit_imp::cleanup();
+    });
+}
 
 // Computes (value*numer)/denom without overflow, as long as both
 // (numer*denom) and the overall result fit into i64 (which is the case

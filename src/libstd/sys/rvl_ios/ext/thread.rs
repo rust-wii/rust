@@ -9,7 +9,7 @@ use crate::thread::JoinHandle;
 
 #[stable(feature = "thread_extensions", since = "1.9.0")]
 #[allow(deprecated)]
-pub type RawPthread = pthread_t;
+pub type RawPthread = libc::pthread_t;
 
 /// Unix-specific extensions to [`thread::JoinHandle`].
 ///

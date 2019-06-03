@@ -213,19 +213,19 @@ fn default_hook(info: &PanicInfo<'_>) {
 }
 
 
-// #[cfg(not(test))]
-// #[doc(hidden)]
-// #[unstable(feature = "update_panic_count", issue = "0")]
-// pub fn update_panic_count(amt: isize) -> usize {
-//     use crate::cell::Cell;
-//     thread_local! { static PANIC_COUNT: Cell<usize> = Cell::new(0) }
+#[cfg(not(test))]
+#[doc(hidden)]
+#[unstable(feature = "update_panic_count", issue = "0")]
+pub fn update_panic_count(amt: isize) -> usize {
+    use crate::cell::Cell;
+    thread_local! { static PANIC_COUNT: Cell<usize> = Cell::new(0) }
 
-//     PANIC_COUNT.with(|c| {
-//         let next = (c.get() as isize + amt) as usize;
-//         c.set(next);
-//         return next
-//     })
-// }
+    PANIC_COUNT.with(|c| {
+        let next = (c.get() as isize + amt) as usize;
+        c.set(next);
+        return next
+    })
+}
 
 #[cfg(test)]
 pub use realstd::rt::update_panic_count;

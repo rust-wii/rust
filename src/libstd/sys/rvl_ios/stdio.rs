@@ -15,9 +15,9 @@ impl io::Read for Stdin {
         ManuallyDrop::new(FileDesc::new(libc::STDIN_FILENO)).read(buf)
     }
 
-    fn read_vectored(&mut self, bufs: &mut [IoSliceMut<'_>]) -> io::Result<usize> {
-        ManuallyDrop::new(FileDesc::new(libc::STDIN_FILENO)).read_vectored(bufs)
-    }
+    // fn read_vectored(&mut self, bufs: &mut [IoSliceMut<'_>]) -> io::Result<usize> {
+    //     ManuallyDrop::new(FileDesc::new(libc::STDIN_FILENO)).read_vectored(bufs)
+    // }
 }
 
 impl Stdout {
@@ -29,9 +29,9 @@ impl io::Write for Stdout {
         ManuallyDrop::new(FileDesc::new(libc::STDOUT_FILENO)).write(buf)
     }
 
-    fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
-        ManuallyDrop::new(FileDesc::new(libc::STDOUT_FILENO)).write_vectored(bufs)
-    }
+    // fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
+    //     ManuallyDrop::new(FileDesc::new(libc::STDOUT_FILENO)).write_vectored(bufs)
+    // }
 
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
@@ -47,9 +47,9 @@ impl io::Write for Stderr {
         ManuallyDrop::new(FileDesc::new(libc::STDERR_FILENO)).write(buf)
     }
 
-    fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
-        ManuallyDrop::new(FileDesc::new(libc::STDERR_FILENO)).write_vectored(bufs)
-    }
+    // fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
+    //     ManuallyDrop::new(FileDesc::new(libc::STDERR_FILENO)).write_vectored(bufs)
+    // }
 
     fn flush(&mut self) -> io::Result<()> {
         Ok(())

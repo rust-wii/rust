@@ -16,9 +16,9 @@ pub unsafe fn init(argc: isize, argv: *const *const u8) { imp::init(argc, argv) 
 pub unsafe fn cleanup() { imp::cleanup() }
 
 /// Returns the command line arguments
-pub fn args() -> Args {
-    imp::args()
-}
+// pub fn args() -> Args {
+//     imp::args()
+// }
 
 pub struct Args {
     iter: vec::IntoIter<OsString>,
@@ -99,6 +99,30 @@ mod imp {
                 OsStringExt::from_vec(cstr.to_bytes().to_vec())
             }).collect()
         }
+    }
+}
+
+#[cfg(any(target_os = "rvl-ios"))]
+mod imp {
+    use crate::ptr;
+    use crate::sys_common::mutex::Mutex;
+
+    static mut ARGC: isize = 0;
+    static mut ARGV: *const *const u8 = ptr::null();
+    // We never call `ENV_LOCK.init()`, so it is UB to attempt to
+    // acquire this mutex reentrantly!
+    static LOCK: Mutex = Mutex::new();
+
+    pub unsafe fn init(argc: isize, argv: *const *const u8) {
+        let _guard = LOCK.lock();
+        ARGC = argc;
+        ARGV = argv;
+    }
+
+    pub unsafe fn cleanup() {
+        let _guard = LOCK.lock();
+        ARGC = 0;
+        ARGV = ptr::null();
     }
 }
 

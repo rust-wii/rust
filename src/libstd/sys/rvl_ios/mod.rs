@@ -8,18 +8,18 @@ use crate::io::ErrorKind;
 pub use self::rand::hashmap_random_keys;
 pub use libc::strlen;
 
-//#[macro_use]
-//pub mod weak;
+#[macro_use]
+pub mod weak;
 
 pub mod alloc;
-//pub mod args;
+pub mod args;
 //pub mod android;
 pub mod cmath;
-//pub mod condvar;
+pub mod condvar;
 pub mod env;
 pub mod ext;
 pub mod fast_thread_local;
-//pub mod fd;
+pub mod fd;
 //pub mod fs;
 pub mod memchr;
 pub mod io;
@@ -30,7 +30,7 @@ pub mod mutex;
 mod l4re;
 #[cfg(target_os = "l4re")]
 pub use self::l4re::net;
-//pub mod os;
+pub mod os;
 pub mod path;
 //pub mod pipe;
 //pub mod process;
@@ -39,8 +39,8 @@ pub mod rwlock;
 pub mod stack_overflow;
 pub mod thread;
 pub mod thread_local;
-//pub mod time;
-//pub mod stdio;
+pub mod time;
+pub mod stdio;
 
 pub use crate::sys_common::os_str_bytes as os_str;
 
@@ -111,25 +111,25 @@ macro_rules! impl_is_minus_one {
 
 impl_is_minus_one! { i8 i16 i32 i64 isize }
 
-// pub fn cvt<T: IsMinusOne>(t: T) -> crate::io::Result<T> {
-//     if t.is_minus_one() {
-//         Err(crate::io::Error::raw_os_error(101))
-//     } else {
-//         Ok(t)
-//     }
-// }
+pub fn cvt<T: IsMinusOne>(t: T) -> crate::io::Result<T> {
+    if t.is_minus_one() {
+        Err(crate::io::Error::last_os_error())
+    } else {
+        Ok(t)
+    }
+}
 
-// pub fn cvt_r<T, F>(mut f: F) -> crate::io::Result<T>
-//     where T: IsMinusOne,
-//           F: FnMut() -> T
-// {
-//     loop {
-//         match cvt(f()) {
-//             Err(ref e) if e.kind() == ErrorKind::Interrupted => {}
-//             other => return other,
-//         }
-//     }
-// }
+pub fn cvt_r<T, F>(mut f: F) -> crate::io::Result<T>
+    where T: IsMinusOne,
+          F: FnMut() -> T
+{
+    loop {
+        match cvt(f()) {
+            Err(ref e) if e.kind() == ErrorKind::Interrupted => {}
+            other => return other,
+        }
+    }
+}
 
 // On Unix-like platforms, libc::abort will unregister signal handlers
 // including the SIGABRT handler, preventing the abort from being blocked, and

@@ -11,9 +11,9 @@ use crate::ops::{Deref, DerefMut};
 use crate::panicking;
 use crate::ptr::{Unique, NonNull};
 use crate::rc::Rc;
-//use crate::sync::{Arc, Mutex, RwLock, atomic};
+use crate::sync::{Arc, Mutex, RwLock, atomic};
 use crate::task::{Context, Poll};
-//use crate::thread::Result;
+use crate::thread::Result;
 
 #[stable(feature = "panic_hooks", since = "1.10.0")]
 pub use crate::panicking::{take_hook, set_hook};
@@ -319,15 +319,15 @@ impl<T: fmt::Debug> fmt::Debug for AssertUnwindSafe<T> {
     }
 }
 
-#[stable(feature = "futures_api", since = "1.36.0")]
-impl<F: Future> Future for AssertUnwindSafe<F> {
-    type Output = F::Output;
+// #[stable(feature = "futures_api", since = "1.36.0")]
+// impl<F: Future> Future for AssertUnwindSafe<F> {
+//     type Output = F::Output;
 
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        let pinned_field = unsafe { Pin::map_unchecked_mut(self, |x| &mut x.0) };
-        F::poll(pinned_field, cx)
-    }
-}
+//     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+//         let pinned_field = unsafe { Pin::map_unchecked_mut(self, |x| &mut x.0) };
+//         F::poll(pinned_field, cx)
+//     }
+// }
 
 /// Invokes a closure, capturing the cause of an unwinding panic if one occurs.
 ///

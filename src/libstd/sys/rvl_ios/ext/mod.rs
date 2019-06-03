@@ -31,8 +31,8 @@ pub mod io;
 pub mod ffi;
 //pub mod fs;
 //pub mod process;
-//pub mod raw;
-//pub mod thread;
+pub mod raw;
+pub mod thread;
 //pub mod net;
 
 /// A prelude for conveniently writing platform-specific code.
@@ -50,8 +50,8 @@ pub mod prelude {
     //pub use super::fs::DirEntryExt;
     //#[doc(no_inline)] #[stable(feature = "file_offset", since = "1.15.0")]
     //pub use super::fs::FileExt;
-    //#[doc(no_inline)] #[stable(feature = "rust1", since = "1.0.0")]
-    //pub use super::thread::JoinHandleExt;
+    #[doc(no_inline)] #[stable(feature = "rust1", since = "1.0.0")]
+    pub use super::thread::JoinHandleExt;
     // #[doc(no_inline)] #[stable(feature = "rust1", since = "1.0.0")]
     // pub use super::process::{CommandExt, ExitStatusExt};
 }

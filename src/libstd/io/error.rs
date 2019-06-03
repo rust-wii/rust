@@ -274,10 +274,10 @@ impl Error {
     ///
     /// println!("last OS error: {:?}", Error::last_os_error());
     /// ```
-    /// #[stable(feature = "rust1", since = "1.0.0")]
-    /// pub fn last_os_error() -> Error {
-    ///     Error::from_raw_os_error(sys::os::errno() as i32)
-    /// }
+    #[stable(feature = "rust1", since = "1.0.0")]
+    pub fn last_os_error() -> Error {
+        Error::from_raw_os_error(sys::os::errno() as i32)
+    }
 
     /// Creates a new instance of an `Error` from a particular OS error code.
     ///

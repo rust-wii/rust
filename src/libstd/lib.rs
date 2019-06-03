@@ -444,7 +444,7 @@ pub mod f64;
 pub mod thread;
 pub mod ascii;
 pub mod collections;
-//pub mod env;
+pub mod env;
 pub mod error;
 pub mod ffi;
 //pub mod fs;
@@ -452,11 +452,11 @@ pub mod io;
 //pub mod net;
 pub mod num;
 //pub mod os;
-//pub mod panic;
+pub mod panic;
 pub mod path;
 //pub mod process;
 pub mod sync;
-//pub mod time;
+pub mod time;
 
 #[stable(feature = "futures_api", since = "1.36.0")]
 pub mod task {
@@ -477,7 +477,7 @@ mod sys;
 pub mod alloc;
 
 // Private support modules
-//mod panicking;
+mod panicking;
 mod memchr;
 
 // The runtime entry point and a few unstable public functions used by the

@@ -19,7 +19,7 @@ use crate::fmt;
 use crate::io;
 use crate::path::{Path, PathBuf};
 use crate::sys;
-//use crate::sys::os as os_imp;
+use crate::sys::os as os_imp;
 
 /// Returns the current working directory as a [`PathBuf`].
 ///
@@ -77,8 +77,8 @@ use crate::sys;
 /// documentation for more.
 ///
 /// [`std::env::vars`]: fn.vars.html
-#[stable(feature = "env", since = "1.0.0")]
-pub struct Vars { inner: VarsOs }
+// #[stable(feature = "env", since = "1.0.0")]
+// pub struct Vars { inner: VarsOs }
 
 /// An iterator over a snapshot of the environment variables of this process.
 ///
@@ -86,8 +86,8 @@ pub struct Vars { inner: VarsOs }
 /// its documentation for more.
 ///
 /// [`std::env::vars_os`]: fn.vars_os.html
-#[stable(feature = "env", since = "1.0.0")]
-pub struct VarsOs { inner: os_imp::Env }
+// #[stable(feature = "env", since = "1.0.0")]
+// pub struct VarsOs { inner: os_imp::Env }
 
 /// Returns an iterator of (variable, value) pairs of strings, for all the
 /// environment variables of the current process.
@@ -115,10 +115,10 @@ pub struct VarsOs { inner: os_imp::Env }
 ///     println!("{}: {}", key, value);
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn vars() -> Vars {
-    Vars { inner: vars_os() }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn vars() -> Vars {
+//     Vars { inner: vars_os() }
+// }
 
 /// Returns an iterator of (variable, value) pairs of OS strings, for all the
 /// environment variables of the current process.
@@ -138,42 +138,42 @@ pub fn vars() -> Vars {
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn vars_os() -> VarsOs {
-    VarsOs { inner: os_imp::env() }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn vars_os() -> VarsOs {
+//     VarsOs { inner: os_imp::env() }
+// }
 
-#[stable(feature = "env", since = "1.0.0")]
-impl Iterator for Vars {
-    type Item = (String, String);
-    fn next(&mut self) -> Option<(String, String)> {
-        self.inner.next().map(|(a, b)| {
-            (a.into_string().unwrap(), b.into_string().unwrap())
-        })
-    }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.inner.size_hint() }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// impl Iterator for Vars {
+//     type Item = (String, String);
+//     fn next(&mut self) -> Option<(String, String)> {
+//         self.inner.next().map(|(a, b)| {
+//             (a.into_string().unwrap(), b.into_string().unwrap())
+//         })
+//     }
+//     fn size_hint(&self) -> (usize, Option<usize>) { self.inner.size_hint() }
+// }
 
-#[stable(feature = "std_debug", since = "1.16.0")]
-impl fmt::Debug for Vars {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.pad("Vars { .. }")
-    }
-}
+// #[stable(feature = "std_debug", since = "1.16.0")]
+// impl fmt::Debug for Vars {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         f.pad("Vars { .. }")
+//     }
+// }
 
-#[stable(feature = "env", since = "1.0.0")]
-impl Iterator for VarsOs {
-    type Item = (OsString, OsString);
-    fn next(&mut self) -> Option<(OsString, OsString)> { self.inner.next() }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.inner.size_hint() }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// impl Iterator for VarsOs {
+//     type Item = (OsString, OsString);
+//     fn next(&mut self) -> Option<(OsString, OsString)> { self.inner.next() }
+//     fn size_hint(&self) -> (usize, Option<usize>) { self.inner.size_hint() }
+// }
 
-#[stable(feature = "std_debug", since = "1.16.0")]
-impl fmt::Debug for VarsOs {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.pad("VarsOs { .. }")
-    }
-}
+// #[stable(feature = "std_debug", since = "1.16.0")]
+// impl fmt::Debug for VarsOs {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         f.pad("VarsOs { .. }")
+//     }
+// }
 
 /// Fetches the environment variable `key` from the current process.
 ///
@@ -193,17 +193,17 @@ impl fmt::Debug for VarsOs {
 ///     Err(e) => println!("couldn't interpret {}: {}", key, e),
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn var<K: AsRef<OsStr>>(key: K) -> Result<String, VarError> {
-    _var(key.as_ref())
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn var<K: AsRef<OsStr>>(key: K) -> Result<String, VarError> {
+//     _var(key.as_ref())
+// }
 
-fn _var(key: &OsStr) -> Result<String, VarError> {
-    match var_os(key) {
-        Some(s) => s.into_string().map_err(VarError::NotUnicode),
-        None => Err(VarError::NotPresent),
-    }
-}
+// fn _var(key: &OsStr) -> Result<String, VarError> {
+//     match var_os(key) {
+//         Some(s) => s.into_string().map_err(VarError::NotUnicode),
+//         None => Err(VarError::NotPresent),
+//     }
+// }
 
 /// Fetches the environment variable `key` from the current process, returning
 /// [`None`] if the variable isn't set.
@@ -221,16 +221,16 @@ fn _var(key: &OsStr) -> Result<String, VarError> {
 ///     None => println!("{} is not defined in the environment.", key)
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn var_os<K: AsRef<OsStr>>(key: K) -> Option<OsString> {
-    _var_os(key.as_ref())
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn var_os<K: AsRef<OsStr>>(key: K) -> Option<OsString> {
+//     _var_os(key.as_ref())
+// }
 
-fn _var_os(key: &OsStr) -> Option<OsString> {
-    os_imp::getenv(key).unwrap_or_else(|e| {
-        panic!("failed to get environment variable `{:?}`: {}", key, e)
-    })
-}
+// fn _var_os(key: &OsStr) -> Option<OsString> {
+//     os_imp::getenv(key).unwrap_or_else(|e| {
+//         panic!("failed to get environment variable `{:?}`: {}", key, e)
+//     })
+// }
 
 /// The error type for operations interacting with environment variables.
 /// Possibly returned from the [`env::var`] function.
@@ -392,10 +392,10 @@ pub struct SplitPaths<'a> { inner: os_imp::SplitPaths<'a> }
 /// ```
 ///
 /// [`PathBuf`]: ../../std/path/struct.PathBuf.html
-#[stable(feature = "env", since = "1.0.0")]
-pub fn split_paths<T: AsRef<OsStr> + ?Sized>(unparsed: &T) -> SplitPaths<'_> {
-    SplitPaths { inner: os_imp::split_paths(unparsed.as_ref()) }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn split_paths<T: AsRef<OsStr> + ?Sized>(unparsed: &T) -> SplitPaths<'_> {
+//     SplitPaths { inner: os_imp::split_paths(unparsed.as_ref()) }
+// }
 
 #[stable(feature = "env", since = "1.0.0")]
 impl<'a> Iterator for SplitPaths<'a> {
@@ -485,14 +485,14 @@ pub struct JoinPathsError {
 /// ```
 ///
 /// [`env::split_paths`]: fn.split_paths.html
-#[stable(feature = "env", since = "1.0.0")]
-pub fn join_paths<I, T>(paths: I) -> Result<OsString, JoinPathsError>
-    where I: IntoIterator<Item=T>, T: AsRef<OsStr>
-{
-    os_imp::join_paths(paths.into_iter()).map_err(|e| {
-        JoinPathsError { inner: e }
-    })
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn join_paths<I, T>(paths: I) -> Result<OsString, JoinPathsError>
+//     where I: IntoIterator<Item=T>, T: AsRef<OsStr>
+// {
+//     os_imp::join_paths(paths.into_iter()).map_err(|e| {
+//         JoinPathsError { inner: e }
+//     })
+// }
 
 #[stable(feature = "env", since = "1.0.0")]
 impl fmt::Display for JoinPathsError {
@@ -537,13 +537,13 @@ impl Error for JoinPathsError {
 ///     None => println!("Impossible to get your home dir!"),
 /// }
 /// ```
-#[rustc_deprecated(since = "1.29.0",
-    reason = "This function's behavior is unexpected and probably not what you want. \
-              Consider using the home_dir function from https://crates.io/crates/dirs instead.")]
-#[stable(feature = "env", since = "1.0.0")]
-pub fn home_dir() -> Option<PathBuf> {
-    os_imp::home_dir()
-}
+// #[rustc_deprecated(since = "1.29.0",
+//     reason = "This function's behavior is unexpected and probably not what you want. \
+//               Consider using the home_dir function from https://crates.io/crates/dirs instead.")]
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn home_dir() -> Option<PathBuf> {
+//     os_imp::home_dir()
+// }
 
 /// Returns the path of a temporary directory.
 ///
@@ -576,10 +576,10 @@ pub fn home_dir() -> Option<PathBuf> {
 ///     Ok(())
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn temp_dir() -> PathBuf {
-    os_imp::temp_dir()
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn temp_dir() -> PathBuf {
+//     os_imp::temp_dir()
+// }
 
 /// Returns the full filesystem path of the current running executable.
 ///
@@ -708,10 +708,10 @@ pub struct ArgsOs { inner: sys::args::Args }
 /// ```
 ///
 /// [`args_os`]: ./fn.args_os.html
-#[stable(feature = "env", since = "1.0.0")]
-pub fn args() -> Args {
-    Args { inner: args_os() }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn args() -> Args {
+//     Args { inner: args_os() }
+// }
 
 /// Returns the arguments which this program was started with (normally passed
 /// via the command line).
@@ -730,10 +730,10 @@ pub fn args() -> Args {
 ///     println!("{:?}", argument);
 /// }
 /// ```
-#[stable(feature = "env", since = "1.0.0")]
-pub fn args_os() -> ArgsOs {
-    ArgsOs { inner: sys::args::args() }
-}
+// #[stable(feature = "env", since = "1.0.0")]
+// pub fn args_os() -> ArgsOs {
+//     ArgsOs { inner: sys::args::args() }
+// }
 
 #[stable(feature = "env_unimpl_send_sync", since = "1.26.0")]
 impl !Send for Args {}
@@ -808,7 +808,7 @@ impl fmt::Debug for ArgsOs {
 /// Constants associated with the current target
 #[stable(feature = "env", since = "1.0.0")]
 pub mod consts {
-    //use crate::sys::env::os;
+    use crate::sys::env::os;
 
     /// A string describing the architecture of the CPU that is currently
     /// in use.
@@ -852,8 +852,8 @@ pub mod consts {
     /// - solaris
     /// - android
     /// - windows
-    //#[stable(feature = "env", since = "1.0.0")]
-    //pub const OS: &str = os::OS;
+    #[stable(feature = "env", since = "1.0.0")]
+    pub const OS: &str = os::OS;
 
     /// Specifies the filename prefix used for shared libraries on this
     /// platform. Example value is `lib`.
@@ -862,8 +862,8 @@ pub mod consts {
     ///
     /// - lib
     /// - `""` (an empty string)
-    //#[stable(feature = "env", since = "1.0.0")]
-    //pub const DLL_PREFIX: &str = os::DLL_PREFIX;
+    #[stable(feature = "env", since = "1.0.0")]
+    pub const DLL_PREFIX: &str = os::DLL_PREFIX;
 
     /// Specifies the filename suffix used for shared libraries on this
     /// platform. Example value is `.so`.
@@ -873,8 +873,8 @@ pub mod consts {
     /// - .so
     /// - .dylib
     /// - .dll
-    //#[stable(feature = "env", since = "1.0.0")]
-    //pub const DLL_SUFFIX: &str = os::DLL_SUFFIX;
+    #[stable(feature = "env", since = "1.0.0")]
+    pub const DLL_SUFFIX: &str = os::DLL_SUFFIX;
 
     /// Specifies the file extension used for shared libraries on this
     /// platform that goes after the dot. Example value is `so`.
@@ -884,8 +884,8 @@ pub mod consts {
     /// - so
     /// - dylib
     /// - dll
-    //#[stable(feature = "env", since = "1.0.0")]
-    //pub const DLL_EXTENSION: &str = os::DLL_EXTENSION;
+    #[stable(feature = "env", since = "1.0.0")]
+    pub const DLL_EXTENSION: &str = os::DLL_EXTENSION;
 
     /// Specifies the filename suffix used for executable binaries on this
     /// platform. Example value is `.exe`.
@@ -896,8 +896,8 @@ pub mod consts {
     /// - .nexe
     /// - .pexe
     /// - `""` (an empty string)
-    //#[stable(feature = "env", since = "1.0.0")]
-    //pub const EXE_SUFFIX: &str = os::EXE_SUFFIX;
+    #[stable(feature = "env", since = "1.0.0")]
+    pub const EXE_SUFFIX: &str = os::EXE_SUFFIX;
 
     /// Specifies the file extension, if any, used for executable binaries
     /// on this platform. Example value is `exe`.
@@ -906,8 +906,8 @@ pub mod consts {
     ///
     /// - exe
     /// - `""` (an empty string)
-    //#[stable(feature = "env", since = "1.0.0")]
-    //pub const EXE_EXTENSION: &str = os::EXE_EXTENSION;
+    #[stable(feature = "env", since = "1.0.0")]
+    pub const EXE_EXTENSION: &str = os::EXE_EXTENSION;
 }
 
 #[cfg(target_arch = "x86")]

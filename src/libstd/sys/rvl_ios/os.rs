@@ -1,8 +1,8 @@
-//! Implementation of `std::os` functionality for unix systems
+//! Implementation of `std::os` functionality for wii systems
 
 #![allow(unused_imports)] // lots of cfg code here
 
-use crate::os::unix::prelude::*;
+use crate::os::rvl_ios::prelude::*;
 
 use crate::error::Error as StdError;
 use crate::ffi::{CString, CStr, OsString, OsStr};
@@ -17,6 +17,7 @@ use crate::ptr;
 use crate::slice;
 use crate::str;
 use crate::sys_common::mutex::{Mutex, MutexGuard};
+use crate::sys_common::os_str_bytes::OsStrExt;
 use crate::sys::cvt;
 use crate::sys::fd;
 use crate::vec;
@@ -109,31 +110,31 @@ pub fn error_string(errno: i32) -> String {
     }
 }
 
-pub fn getcwd() -> io::Result<PathBuf> {
-    let mut buf = Vec::with_capacity(512);
-    loop {
-        unsafe {
-            let ptr = buf.as_mut_ptr() as *mut libc::c_char;
-            if !libc::getcwd(ptr, buf.capacity()).is_null() {
-                let len = CStr::from_ptr(buf.as_ptr() as *const libc::c_char).to_bytes().len();
-                buf.set_len(len);
-                buf.shrink_to_fit();
-                return Ok(PathBuf::from(OsString::from_vec(buf)));
-            } else {
-                let error = io::Error::last_os_error();
-                if error.raw_os_error() != Some(libc::ERANGE) {
-                    return Err(error);
-                }
-            }
+// pub fn getcwd() -> io::Result<PathBuf> {
+//     let mut buf = Vec::with_capacity(512);
+//     loop {
+//         unsafe {
+//             let ptr = buf.as_mut_ptr() as *mut libc::c_char;
+//             if !libc::getcwd(ptr, buf.capacity()).is_null() {
+//                 let len = CStr::from_ptr(buf.as_ptr() as *const libc::c_char).to_bytes().len();
+//                 buf.set_len(len);
+//                 buf.shrink_to_fit();
+//                 return Ok(PathBuf::from(OsString::from_vec(buf)));
+//             } else {
+//                 let error = io::Error::last_os_error();
+//                 if error.raw_os_error() != Some(libc::ERANGE) {
+//                     return Err(error);
+//                 }
+//             }
 
-            // Trigger the internal buffer resizing logic of `Vec` by requiring
-            // more space than the current capacity.
-            let cap = buf.capacity();
-            buf.set_len(cap);
-            buf.reserve(1);
-        }
-    }
-}
+//             // Trigger the internal buffer resizing logic of `Vec` by requiring
+//             // more space than the current capacity.
+//             let cap = buf.capacity();
+//             buf.set_len(cap);
+//             buf.reserve(1);
+//         }
+//     }
+// }
 
 pub fn chdir(p: &path::Path) -> io::Result<()> {
     let p: &OsStr = p.as_ref();
@@ -151,17 +152,17 @@ pub struct SplitPaths<'a> {
                     fn(&'a [u8]) -> PathBuf>,
 }
 
-pub fn split_paths(unparsed: &OsStr) -> SplitPaths<'_> {
-    fn bytes_to_path(b: &[u8]) -> PathBuf {
-        PathBuf::from(<OsStr as OsStrExt>::from_bytes(b))
-    }
-    fn is_colon(b: &u8) -> bool { *b == b':' }
-    let unparsed = unparsed.as_bytes();
-    SplitPaths {
-        iter: unparsed.split(is_colon as fn(&u8) -> bool)
-                      .map(bytes_to_path as fn(&[u8]) -> PathBuf)
-    }
-}
+// pub fn split_paths(unparsed: &OsStr) -> SplitPaths<'_> {
+//     fn bytes_to_path(b: &[u8]) -> PathBuf {
+//         PathBuf::from(<OsStr as OsStrExt>::from_bytes(b))
+//     }
+//     fn is_colon(b: &u8) -> bool { *b == b':' }
+//     let unparsed = unparsed.as_bytes();
+//     SplitPaths {
+//         iter: unparsed.split(is_colon as fn(&u8) -> bool)
+//                       .map(bytes_to_path as fn(&[u8]) -> PathBuf)
+//     }
+// }
 
 impl<'a> Iterator for SplitPaths<'a> {
     type Item = PathBuf;
@@ -172,22 +173,22 @@ impl<'a> Iterator for SplitPaths<'a> {
 #[derive(Debug)]
 pub struct JoinPathsError;
 
-pub fn join_paths<I, T>(paths: I) -> Result<OsString, JoinPathsError>
-    where I: Iterator<Item=T>, T: AsRef<OsStr>
-{
-    let mut joined = Vec::new();
-    let sep = b':';
+// pub fn join_paths<I, T>(paths: I) -> Result<OsString, JoinPathsError>
+//     where I: Iterator<Item=T>, T: AsRef<OsStr>
+// {
+//     let mut joined = Vec::new();
+//     let sep = b':';
 
-    for (i, path) in paths.enumerate() {
-        let path = path.as_ref().as_bytes();
-        if i > 0 { joined.push(sep) }
-        if path.contains(&sep) {
-            return Err(JoinPathsError)
-        }
-        joined.extend_from_slice(path);
-    }
-    Ok(OsStringExt::from_vec(joined))
-}
+//     for (i, path) in paths.enumerate() {
+//         let path = path.as_ref().as_bytes();
+//         if i > 0 { joined.push(sep) }
+//         if path.contains(&sep) {
+//             return Err(JoinPathsError)
+//         }
+//         joined.extend_from_slice(path);
+//     }
+//     Ok(OsStringExt::from_vec(joined))
+// }
 
 impl fmt::Display for JoinPathsError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -295,6 +296,11 @@ pub fn current_exe() -> io::Result<PathBuf> {
         },
         other => other,
     }
+}
+
+#[cfg(any(target_os = "rvl-ios"))]
+pub fn current_exe() -> io::Result<PathBuf> {
+    unimplemented!()
 }
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
@@ -420,54 +426,54 @@ pub unsafe fn env_lock() -> MutexGuard<'static> {
 
 /// Returns a vector of (variable, value) byte-vector pairs for all the
 /// environment variables of the current process.
-pub fn env() -> Env {
-    unsafe {
-        let _guard = env_lock();
-        let mut environ = *environ();
-        let mut result = Vec::new();
-        while environ != ptr::null() && *environ != ptr::null() {
-            if let Some(key_value) = parse(CStr::from_ptr(*environ).to_bytes()) {
-                result.push(key_value);
-            }
-            environ = environ.offset(1);
-        }
-        return Env {
-            iter: result.into_iter(),
-            _dont_send_or_sync_me: PhantomData,
-        }
-    }
+// pub fn env() -> Env {
+//     unsafe {
+//         let _guard = env_lock();
+//         let mut environ = *environ();
+//         let mut result = Vec::new();
+//         while environ != ptr::null() && *environ != ptr::null() {
+//             if let Some(key_value) = parse(CStr::from_ptr(*environ).to_bytes()) {
+//                 result.push(key_value);
+//             }
+//             environ = environ.offset(1);
+//         }
+//         return Env {
+//             iter: result.into_iter(),
+//             _dont_send_or_sync_me: PhantomData,
+//         }
+//     }
 
-    fn parse(input: &[u8]) -> Option<(OsString, OsString)> {
-        // Strategy (copied from glibc): Variable name and value are separated
-        // by an ASCII equals sign '='. Since a variable name must not be
-        // empty, allow variable names starting with an equals sign. Skip all
-        // malformed lines.
-        if input.is_empty() {
-            return None;
-        }
-        let pos = memchr::memchr(b'=', &input[1..]).map(|p| p + 1);
-        pos.map(|p| (
-            OsStringExt::from_vec(input[..p].to_vec()),
-            OsStringExt::from_vec(input[p+1..].to_vec()),
-        ))
-    }
-}
+//     // fn parse(input: &[u8]) -> Option<(OsString, OsString)> {
+//     //     // Strategy (copied from glibc): Variable name and value are separated
+//     //     // by an ASCII equals sign '='. Since a variable name must not be
+//     //     // empty, allow variable names starting with an equals sign. Skip all
+//     //     // malformed lines.
+//     //     if input.is_empty() {
+//     //         return None;
+//     //     }
+//     //     let pos = memchr::memchr(b'=', &input[1..]).map(|p| p + 1);
+//     //     pos.map(|p| (
+//     //         OsStringExt::from_vec(input[..p].to_vec()),
+//     //         OsStringExt::from_vec(input[p+1..].to_vec()),
+//     //     ))
+//     // }
+// }
 
-pub fn getenv(k: &OsStr) -> io::Result<Option<OsString>> {
-    // environment variables with a nul byte can't be set, so their value is
-    // always None as well
-    let k = CString::new(k.as_bytes())?;
-    unsafe {
-        let _guard = env_lock();
-        let s = libc::getenv(k.as_ptr()) as *const libc::c_char;
-        let ret = if s.is_null() {
-            None
-        } else {
-            Some(OsStringExt::from_vec(CStr::from_ptr(s).to_bytes().to_vec()))
-        };
-        Ok(ret)
-    }
-}
+// pub fn getenv(k: &OsStr) -> io::Result<Option<OsString>> {
+//     // environment variables with a nul byte can't be set, so their value is
+//     // always None as well
+//     let k = CString::new(k.as_bytes())?;
+//     unsafe {
+//         let _guard = env_lock();
+//         let s = libc::getenv(k.as_ptr()) as *const libc::c_char;
+//         let ret = if s.is_null() {
+//             None
+//         } else {
+//             Some(OsStringExt::from_vec(CStr::from_ptr(s).to_bytes().to_vec()))
+//         };
+//         Ok(ret)
+//     }
+// }
 
 pub fn setenv(k: &OsStr, v: &OsStr) -> io::Result<()> {
     let k = CString::new(k.as_bytes())?;
@@ -494,47 +500,47 @@ pub fn page_size() -> usize {
     }
 }
 
-pub fn temp_dir() -> PathBuf {
-    crate::env::var_os("TMPDIR").map(PathBuf::from).unwrap_or_else(|| {
-        if cfg!(target_os = "android") {
-            PathBuf::from("/data/local/tmp")
-        } else {
-            PathBuf::from("/tmp")
-        }
-    })
-}
+// pub fn temp_dir() -> PathBuf {
+//     crate::env::var_os("TMPDIR").map(PathBuf::from).unwrap_or_else(|| {
+//         if cfg!(target_os = "android") {
+//             PathBuf::from("/data/local/tmp")
+//         } else {
+//             PathBuf::from("/tmp")
+//         }
+//     })
+//}
 
-pub fn home_dir() -> Option<PathBuf> {
-    return crate::env::var_os("HOME").or_else(|| unsafe {
-        fallback()
-    }).map(PathBuf::from);
+// pub fn home_dir() -> Option<PathBuf> {
+//     return crate::env::var_os("HOME").or_else(|| unsafe {
+//         fallback()
+//     }).map(PathBuf::from);
 
-    #[cfg(any(target_os = "android",
-              target_os = "ios",
-              target_os = "emscripten"))]
-    unsafe fn fallback() -> Option<OsString> { None }
-    #[cfg(not(any(target_os = "android",
-                  target_os = "ios",
-                  target_os = "emscripten")))]
-    unsafe fn fallback() -> Option<OsString> {
-        let amt = match libc::sysconf(libc::_SC_GETPW_R_SIZE_MAX) {
-            n if n < 0 => 512 as usize,
-            n => n as usize,
-        };
-        let mut buf = Vec::with_capacity(amt);
-        let mut passwd: libc::passwd = mem::zeroed();
-        let mut result = ptr::null_mut();
-        match libc::getpwuid_r(libc::getuid(), &mut passwd, buf.as_mut_ptr(),
-                               buf.capacity(), &mut result) {
-            0 if !result.is_null() => {
-                let ptr = passwd.pw_dir as *const _;
-                let bytes = CStr::from_ptr(ptr).to_bytes().to_vec();
-                Some(OsStringExt::from_vec(bytes))
-            },
-            _ => None,
-        }
-    }
-}
+//     #[cfg(any(target_os = "android",
+//               target_os = "ios",
+//               target_os = "emscripten"))]
+//     unsafe fn fallback() -> Option<OsString> { None }
+//     #[cfg(not(any(target_os = "android",
+//                   target_os = "ios",
+//                   target_os = "emscripten")))]
+//     unsafe fn fallback() -> Option<OsString> {
+//         let amt = match libc::sysconf(libc::_SC_GETPW_R_SIZE_MAX) {
+//             n if n < 0 => 512 as usize,
+//             n => n as usize,
+//         };
+//         let mut buf = Vec::with_capacity(amt);
+//         let mut passwd: libc::passwd = mem::zeroed();
+//         let mut result = ptr::null_mut();
+//         match libc::getpwuid_r(libc::getuid(), &mut passwd, buf.as_mut_ptr(),
+//                                buf.capacity(), &mut result) {
+//             0 if !result.is_null() => {
+//                 let ptr = passwd.pw_dir as *const _;
+//                 let bytes = CStr::from_ptr(ptr).to_bytes().to_vec();
+//                 Some(OsStringExt::from_vec(bytes))
+//             },
+//             _ => None,
+//         }
+//     }
+// }
 
 pub fn exit(code: i32) -> ! {
     unsafe { libc::exit(code as c_int) }

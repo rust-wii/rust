@@ -7,7 +7,7 @@ use crate::fmt;
 use crate::str;
 use crate::mem;
 use crate::rc::Rc;
-//use crate::sync::Arc;
+use crate::sync::Arc;
 use crate::sys_common::{FromInner, IntoInner, AsInner};
 use crate::sys_common::bytestring::debug_fmt_bytestring;
 
@@ -124,10 +124,10 @@ impl Buf {
         Buf { inner: inner.into_vec() }
     }
 
-    // #[inline]
-    // pub fn into_arc(&self) -> Arc<Slice> {
-    //     self.as_slice().into_arc()
-    // }
+    #[inline]
+    pub fn into_arc(&self) -> Arc<Slice> {
+        self.as_slice().into_arc()
+    }
 
     #[inline]
     pub fn into_rc(&self) -> Rc<Slice> {
@@ -167,11 +167,11 @@ impl Slice {
         unsafe { mem::transmute(boxed) }
     }
 
-    // #[inline]
-    // pub fn into_arc(&self) -> Arc<Slice> {
-    //     let arc: Arc<[u8]> = Arc::from(&self.inner);
-    //     unsafe { Arc::from_raw(Arc::into_raw(arc) as *const Slice) }
-    // }
+    #[inline]
+    pub fn into_arc(&self) -> Arc<Slice> {
+        let arc: Arc<[u8]> = Arc::from(&self.inner);
+        unsafe { Arc::from_raw(Arc::into_raw(arc) as *const Slice) }
+    }
 
     #[inline]
     pub fn into_rc(&self) -> Rc<Slice> {
