@@ -2,7 +2,7 @@
 
 #![allow(unused_imports)] // lots of cfg code here
 
-use crate::os::rvl_ios::prelude::*;
+use crate::os::rvl_ios::*;
 
 use crate::error::Error as StdError;
 use crate::ffi::{CString, CStr, OsString, OsStr};

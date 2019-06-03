@@ -62,7 +62,8 @@ unsafe fn fetch(name: &str) -> usize {
         Ok(cstr) => cstr,
         Err(..) => return 0,
     };
-    libc::dlsym(libc::RTLD_DEFAULT, name.as_ptr()) as usize
+    // TODO: FIX THIS libc::RTLD_DEFAULT
+    libc::dlsym(0 as *mut libc::c_void, name.as_ptr()) as usize
 }
 
 #[cfg(not(target_os = "linux"))]

@@ -451,7 +451,7 @@ pub mod ffi;
 pub mod io;
 //pub mod net;
 pub mod num;
-//pub mod os;
+pub mod os;
 pub mod panic;
 pub mod path;
 //pub mod process;
@@ -482,7 +482,7 @@ mod memchr;
 
 // The runtime entry point and a few unstable public functions used by the
 // compiler
-// pub mod rt;
+pub mod rt;
 
 // Pull in the `std_detect` crate directly into libstd. The contents of
 // `std_detect` are in a different repository: rust-lang-nursery/stdsimd.

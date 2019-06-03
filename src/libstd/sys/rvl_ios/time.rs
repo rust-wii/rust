@@ -282,7 +282,7 @@ mod inner {
 
     impl Instant {
         pub fn now() -> Instant {
-            Instant { t: now(libc::CLOCK_MONOTONIC as u32) }
+            Instant { t: (now(libc::CLOCK_MONOTONIC as i32)) }
         }
 
         pub const fn zero() -> Instant {
@@ -321,7 +321,7 @@ mod inner {
 
     impl SystemTime {
         pub fn now() -> SystemTime {
-            SystemTime { t: now(libc::CLOCK_REALTIME as u32) }
+            SystemTime { t: (now(libc::CLOCK_REALTIME as i32)) }
         }
 
         pub fn sub_time(&self, other: &SystemTime)
