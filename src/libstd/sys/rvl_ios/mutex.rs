@@ -1,7 +1,9 @@
 use crate::cell::UnsafeCell;
 use crate::mem;
 
-pub struct Mutex { inner: UnsafeCell<libc::pthread_mutex_t> }
+pub struct Mutex {
+    inner: UnsafeCell<libc::pthread_mutex_t>,
+}
 
 #[inline]
 pub unsafe fn raw(m: &Mutex) -> *mut libc::pthread_mutex_t {
@@ -20,6 +22,7 @@ impl Mutex {
         // locking is undefined behavior until `init` is called!
         Mutex { inner: UnsafeCell::new(libc::PTHREAD_MUTEX_INITIALIZER) }
     }
+
     #[inline]
     pub unsafe fn init(&mut self) {
         // Issue #33770
@@ -40,49 +43,52 @@ impl Mutex {
         // references, we instead create the mutex with type
         // PTHREAD_MUTEX_NORMAL which is guaranteed to deadlock if we try to
         // re-lock it from the same thread, thus avoiding undefined behavior.
-        let mut attr: libc::pthread_mutexattr_t = mem::uninitialized();
-        let r = libc::pthread_mutexattr_init(&mut attr);
-        debug_assert_eq!(r, 0);
-        let r = libc::pthread_mutexattr_settype(&mut attr, libc::PTHREAD_MUTEX_NORMAL);
-        debug_assert_eq!(r, 0);
-        let r = libc::pthread_mutex_init(self.inner.get(), &attr);
-        debug_assert_eq!(r, 0);
-        let r = libc::pthread_mutexattr_destroy(&mut attr);
+
+        //let mut attr: libc::pthread_mutexattr_t = mem::uninitialized();
+        // let r = libc::pthread_mutexattr_init(&mut attr);
+        // debug_assert_eq!(r, 0);
+        // let r = libc::pthread_mutexattr_settype(&mut attr, libc::PTHREAD_MUTEX_NORMAL);
+        // debug_assert_eq!(r, 0);
+        //let r = libc::pthread_mutexattr_destroy(&mut attr);
+        //debug_assert_eq!(r, 0);
+
+        // Note: libogc doesnt require special init functions as seen above.
+        // The LWP_MutexInit function uses a boolean to determine if it will be recursive or not.
+        let r = ogc_sys::LWP_MutexInit(self.inner.get() as *mut u32, false);
         debug_assert_eq!(r, 0);
     }
+
     #[inline]
     pub unsafe fn lock(&self) {
-        let r = libc::pthread_mutex_lock(self.inner.get());
+        //let r = libc::pthread_mutex_lock(self.inner.get());
+        let r = ogc_sys::LWP_MutexLock(self.inner.get() as u32);
         debug_assert_eq!(r, 0);
     }
+
     #[inline]
     pub unsafe fn unlock(&self) {
-        let r = libc::pthread_mutex_unlock(self.inner.get());
+        //let r = libc::pthread_mutex_unlock(self.inner.get());
+        let r = ogc_sys::LWP_MutexUnlock(self.inner.get() as u32);
         debug_assert_eq!(r, 0);
     }
+
     #[inline]
     pub unsafe fn try_lock(&self) -> bool {
-        libc::pthread_mutex_trylock(self.inner.get()) == 0
+        //libc::pthread_mutex_trylock(self.inner.get()) == 0
+        ogc_sys::LWP_MutexTryLock(self.inner.get() as u32) == 0
     }
+
     #[inline]
-    #[cfg(not(target_os = "dragonfly"))]
     pub unsafe fn destroy(&self) {
-        let r = libc::pthread_mutex_destroy(self.inner.get());
+        //let r = libc::pthread_mutex_destroy(self.inner.get());
+        let r = ogc_sys::LWP_MutexDestroy(self.inner.get() as u32);
         debug_assert_eq!(r, 0);
-    }
-    #[inline]
-    #[cfg(target_os = "dragonfly")]
-    pub unsafe fn destroy(&self) {
-        let r = libc::pthread_mutex_destroy(self.inner.get());
-        // On DragonFly pthread_mutex_destroy() returns EINVAL if called on a
-        // mutex that was just initialized with libc::PTHREAD_MUTEX_INITIALIZER.
-        // Once it is used (locked/unlocked) or pthread_mutex_init() is called,
-        // this behaviour no longer occurs.
-        debug_assert!(r == 0 || r == libc::EINVAL);
     }
 }
 
-pub struct ReentrantMutex { inner: UnsafeCell<libc::pthread_mutex_t> }
+pub struct ReentrantMutex {
+    inner: UnsafeCell<libc::pthread_mutex_t>,
+}
 
 unsafe impl Send for ReentrantMutex {}
 unsafe impl Sync for ReentrantMutex {}
@@ -93,35 +99,42 @@ impl ReentrantMutex {
     }
 
     pub unsafe fn init(&mut self) {
-        let mut attr: libc::pthread_mutexattr_t = mem::uninitialized();
-        let result = libc::pthread_mutexattr_init(&mut attr as *mut _);
-        debug_assert_eq!(result, 0);
-        let result = libc::pthread_mutexattr_settype(&mut attr as *mut _,
-                                                    libc::PTHREAD_MUTEX_RECURSIVE);
-        debug_assert_eq!(result, 0);
-        let result = libc::pthread_mutex_init(self.inner.get(), &attr as *const _);
-        debug_assert_eq!(result, 0);
-        let result = libc::pthread_mutexattr_destroy(&mut attr as *mut _);
+        // let mut attr: libc::pthread_mutexattr_t = mem::uninitialized();
+        // let result = libc::pthread_mutexattr_init(&mut attr as *mut _);
+        // debug_assert_eq!(result, 0);
+        // let result = libc::pthread_mutexattr_settype(&mut attr as *mut _,
+        //                                             libc::PTHREAD_MUTEX_RECURSIVE);
+        // debug_assert_eq!(result, 0);
+        // let result = libc::pthread_mutexattr_destroy(&mut attr as *mut _);
+        // debug_assert_eq!(result, 0);
+        
+        // Note: libogc doesnt require special init functions as seen above.
+        // The LWP_MutexInit function uses a boolean to determine if it will be recursive or not.
+        let result = ogc_sys::LWP_MutexInit(self.inner.get() as *mut u32, true);
         debug_assert_eq!(result, 0);
     }
 
     pub unsafe fn lock(&self) {
-        let result = libc::pthread_mutex_lock(self.inner.get());
+        //let result = libc::pthread_mutex_lock(self.inner.get());
+        let result = ogc_sys::LWP_MutexLock(self.inner.get() as u32);
         debug_assert_eq!(result, 0);
     }
 
     #[inline]
     pub unsafe fn try_lock(&self) -> bool {
-        libc::pthread_mutex_trylock(self.inner.get()) == 0
+        //libc::pthread_mutex_trylock(self.inner.get()) == 0
+        ogc_sys::LWP_MutexTryLock(self.inner.get() as u32) == 0
     }
 
     pub unsafe fn unlock(&self) {
-        let result = libc::pthread_mutex_unlock(self.inner.get());
+        //let result = libc::pthread_mutex_unlock(self.inner.get());
+        let result = ogc_sys::LWP_MutexUnlock(self.inner.get() as u32);
         debug_assert_eq!(result, 0);
     }
 
     pub unsafe fn destroy(&self) {
-        let result = libc::pthread_mutex_destroy(self.inner.get());
+        //let result = libc::pthread_mutex_destroy(self.inner.get());
+        let result = ogc_sys::LWP_MutexDestroy(self.inner.get() as u32);
         debug_assert_eq!(result, 0);
     }
 }

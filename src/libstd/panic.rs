@@ -11,12 +11,13 @@ use crate::ops::{Deref, DerefMut};
 use crate::panicking;
 use crate::ptr::{Unique, NonNull};
 use crate::rc::Rc;
-use crate::sync::{Arc, Mutex, RwLock, atomic};
+// RwLock
+use crate::sync::{Arc, Mutex, atomic};
 use crate::task::{Context, Poll};
 use crate::thread::Result;
 
-#[stable(feature = "panic_hooks", since = "1.10.0")]
-pub use crate::panicking::{take_hook, set_hook};
+// #[stable(feature = "panic_hooks", since = "1.10.0")]
+// pub use crate::panicking::{take_hook, set_hook};
 
 #[stable(feature = "panic_hooks", since = "1.10.0")]
 pub use core::panic::{PanicInfo, Location};
@@ -212,8 +213,8 @@ impl<T: UnwindSafe + ?Sized> UnwindSafe for Unique<T> {}
 impl<T: RefUnwindSafe + ?Sized> UnwindSafe for NonNull<T> {}
 #[stable(feature = "catch_unwind", since = "1.9.0")]
 impl<T: ?Sized> UnwindSafe for Mutex<T> {}
-#[stable(feature = "catch_unwind", since = "1.9.0")]
-impl<T: ?Sized> UnwindSafe for RwLock<T> {}
+// #[stable(feature = "catch_unwind", since = "1.9.0")]
+// impl<T: ?Sized> UnwindSafe for RwLock<T> {}
 #[stable(feature = "catch_unwind", since = "1.9.0")]
 impl<T> UnwindSafe for AssertUnwindSafe<T> {}
 
@@ -236,8 +237,8 @@ impl<T> RefUnwindSafe for AssertUnwindSafe<T> {}
 
 #[stable(feature = "unwind_safe_lock_refs", since = "1.12.0")]
 impl<T: ?Sized> RefUnwindSafe for Mutex<T> {}
-#[stable(feature = "unwind_safe_lock_refs", since = "1.12.0")]
-impl<T: ?Sized> RefUnwindSafe for RwLock<T> {}
+// #[stable(feature = "unwind_safe_lock_refs", since = "1.12.0")]
+// impl<T: ?Sized> RefUnwindSafe for RwLock<T> {}
 
 #[cfg(target_has_atomic = "ptr")]
 #[stable(feature = "unwind_safe_atomic_refs", since = "1.14.0")]

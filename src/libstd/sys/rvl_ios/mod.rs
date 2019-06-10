@@ -2,7 +2,7 @@
 
 use crate::io::ErrorKind;
 
-#[cfg(any(rustdoc, target_os = "linux"))] pub use crate::os::linux as platform;
+#[cfg(any(rustdoc, target_os = "rvl-ios"))] pub use crate::os::rvl_ios as platform;
 #[cfg(all(not(rustdoc), target_os = "l4re"))]      pub use crate::os::linux as platform;
 
 pub use self::rand::hashmap_random_keys;
@@ -35,7 +35,7 @@ pub mod path;
 //pub mod pipe;
 //pub mod process;
 pub mod rand;
-pub mod rwlock;
+//pub mod rwlock;
 pub mod stack_overflow;
 pub mod thread;
 pub mod thread_local;

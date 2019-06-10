@@ -16,7 +16,7 @@ use crate::mem;
 use crate::ptr;
 use crate::raw;
 use crate::sys::stdio::panic_output;
-use crate::sys_common::rwlock::RWLock;
+//use crate::sys_common::rwlock::RWLock;
 use crate::sys_common::thread_info;
 use crate::sys_common::util;
 use crate::thread;
@@ -54,7 +54,7 @@ enum Hook {
     Custom(*mut (dyn Fn(&PanicInfo<'_>) + 'static + Sync + Send)),
 }
 
-static HOOK_LOCK: RWLock = RWLock::new();
+//static HOOK_LOCK: RWLock = RWLock::new();
 static mut HOOK: Hook = Hook::Default;
 
 /// Registers a custom panic hook, replacing any that was previously registered.
@@ -96,16 +96,16 @@ pub fn set_hook(hook: Box<dyn Fn(&PanicInfo<'_>) + 'static + Sync + Send>) {
         panic!("cannot modify the panic hook from a panicking thread");
     }
 
-    unsafe {
-        HOOK_LOCK.write();
-        let old_hook = HOOK;
-        HOOK = Hook::Custom(Box::into_raw(hook));
-        HOOK_LOCK.write_unlock();
+    // unsafe {
+    //     HOOK_LOCK.write();
+    //     let old_hook = HOOK;
+    //     HOOK = Hook::Custom(Box::into_raw(hook));
+    //     HOOK_LOCK.write_unlock();
 
-        if let Hook::Custom(ptr) = old_hook {
-            Box::from_raw(ptr);
-        }
-    }
+    //     if let Hook::Custom(ptr) = old_hook {
+    //         Box::from_raw(ptr);
+    //     }
+    // }
 }
 
 /// Unregisters the current panic hook, returning it.
@@ -141,17 +141,19 @@ pub fn take_hook() -> Box<dyn Fn(&PanicInfo<'_>) + 'static + Sync + Send> {
         panic!("cannot modify the panic hook from a panicking thread");
     }
 
-    unsafe {
-        HOOK_LOCK.write();
-        let hook = HOOK;
-        HOOK = Hook::Default;
-        HOOK_LOCK.write_unlock();
+    // unsafe {
+    //     HOOK_LOCK.write();
+    //     let hook = HOOK;
+    //     HOOK = Hook::Default;
+    //     HOOK_LOCK.write_unlock();
 
-        match hook {
-            Hook::Default => Box::new(default_hook),
-            Hook::Custom(ptr) => Box::from_raw(ptr),
-        }
-    }
+    //     match hook {
+    //         Hook::Default => Box::new(default_hook),
+    //         Hook::Custom(ptr) => Box::from_raw(ptr),
+    //     }
+    // }
+    
+    unimplemented!()
 }
 
 fn default_hook(info: &PanicInfo<'_>) {
@@ -217,14 +219,16 @@ fn default_hook(info: &PanicInfo<'_>) {
 #[doc(hidden)]
 #[unstable(feature = "update_panic_count", issue = "0")]
 pub fn update_panic_count(amt: isize) -> usize {
-    use crate::cell::Cell;
-    thread_local! { static PANIC_COUNT: Cell<usize> = Cell::new(0) }
+    // use crate::cell::Cell;
+    // thread_local! { static PANIC_COUNT: Cell<usize> = Cell::new(0) }
 
-    PANIC_COUNT.with(|c| {
-        let next = (c.get() as isize + amt) as usize;
-        c.set(next);
-        return next
-    })
+    // PANIC_COUNT.with(|c| {
+    //     let next = (c.get() as isize + amt) as usize;
+    //     c.set(next);
+    //     return next
+    // })
+    
+    unimplemented!()
 }
 
 #[cfg(test)]
@@ -463,22 +467,23 @@ fn rust_panic_with_hook(payload: &mut dyn BoxMeUp,
             message,
             Location::internal_constructor(file, line, col),
         );
-        HOOK_LOCK.read();
-        match HOOK {
-            // Some platforms know that printing to stderr won't ever actually
-            // print anything, and if that's the case we can skip the default
-            // hook.
-            Hook::Default if panic_output().is_none() => {}
-            Hook::Default => {
-                info.set_payload(payload.get());
-                default_hook(&info);
-            }
-            Hook::Custom(ptr) => {
-                info.set_payload(payload.get());
-                (*ptr)(&info);
-            }
-        };
-        HOOK_LOCK.read_unlock();
+        // TODO: FIX THIS
+        // HOOK_LOCK.read();
+        // match HOOK {
+        //     // Some platforms know that printing to stderr won't ever actually
+        //     // print anything, and if that's the case we can skip the default
+        //     // hook.
+        //     Hook::Default if panic_output().is_none() => {}
+        //     Hook::Default => {
+        //         info.set_payload(payload.get());
+        //         default_hook(&info);
+        //     }
+        //     Hook::Custom(ptr) => {
+        //         info.set_payload(payload.get());
+        //         (*ptr)(&info);
+        //     }
+        // };
+        // HOOK_LOCK.read_unlock();
     }
 
     if panics > 1 {

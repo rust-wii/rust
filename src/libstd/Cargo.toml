@@ -42,6 +42,9 @@ branch = "wii"
 default-features = false
 features = ["rustc-dep-of-std"]
 
+[dependencies.ogc-sys]
+git = "https://github.com/rust-wii/ogc-sys.git"
+
 [dev-dependencies]
 rand = "0.6.1"
 
