@@ -25,39 +25,37 @@ pub use crate::mem::drop;
 pub use crate::clone::Clone;
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
-pub use crate::cmp::{PartialEq, PartialOrd, Eq, Ord};
+pub use crate::cmp::{Eq, Ord, PartialEq, PartialOrd};
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
-pub use crate::convert::{AsRef, AsMut, Into, From};
+pub use crate::convert::{AsMut, AsRef, From, Into};
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
 pub use crate::default::Default;
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
-pub use crate::iter::{Iterator, Extend, IntoIterator};
-#[stable(feature = "rust1", since = "1.0.0")]
-#[doc(no_inline)]
 pub use crate::iter::{DoubleEndedIterator, ExactSizeIterator};
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
-pub use crate::option::Option::{self, Some, None};
+pub use crate::iter::{Extend, IntoIterator, Iterator};
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
-pub use crate::result::Result::{self, Ok, Err};
-
+pub use crate::option::Option::{self, None, Some};
+#[stable(feature = "rust1", since = "1.0.0")]
+#[doc(no_inline)]
+pub use crate::result::Result::{self, Err, Ok};
 
 // The file so far is equivalent to src/libcore/prelude/v1.rs,
 // and below to src/liballoc/prelude.rs.
 // Those files are duplicated rather than using glob imports
 // because we want docs to show these re-exports as pointing to within `std`.
 
-
-#[stable(feature = "rust1", since = "1.0.0")]
-#[doc(no_inline)]
-pub use crate::boxed::Box;
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
 pub use crate::borrow::ToOwned;
+#[stable(feature = "rust1", since = "1.0.0")]
+#[doc(no_inline)]
+pub use crate::boxed::Box;
 #[stable(feature = "rust1", since = "1.0.0")]
 #[doc(no_inline)]
 pub use crate::slice::SliceConcatExt;

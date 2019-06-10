@@ -1,7 +1,7 @@
 #![allow(missing_copy_implementations)]
 
 use crate::fmt;
-use crate::io::{self, Read, Initializer, Write, ErrorKind, BufRead, IoSlice, IoSliceMut};
+use crate::io::{self, BufRead, ErrorKind, Initializer, IoSlice, IoSliceMut, Read, Write};
 use crate::mem;
 
 /// Copies the entire contents of a reader into a writer.
@@ -41,7 +41,9 @@ use crate::mem;
 /// ```
 #[stable(feature = "rust1", since = "1.0.0")]
 pub fn copy<R: ?Sized, W: ?Sized>(reader: &mut R, writer: &mut W) -> io::Result<u64>
-    where R: Read, W: Write
+where
+    R: Read,
+    W: Write,
 {
     let mut buf = unsafe {
         let mut buf: [u8; super::DEFAULT_BUF_SIZE] = mem::uninitialized();
@@ -69,7 +71,9 @@ pub fn copy<R: ?Sized, W: ?Sized>(reader: &mut R, writer: &mut W) -> io::Result<
 ///
 /// [`empty`]: fn.empty.html
 #[stable(feature = "rust1", since = "1.0.0")]
-pub struct Empty { _priv: () }
+pub struct Empty {
+    _priv: (),
+}
 
 /// Constructs a new handle to an empty reader.
 ///
@@ -89,12 +93,16 @@ pub struct Empty { _priv: () }
 /// assert!(buffer.is_empty());
 /// ```
 #[stable(feature = "rust1", since = "1.0.0")]
-pub fn empty() -> Empty { Empty { _priv: () } }
+pub fn empty() -> Empty {
+    Empty { _priv: () }
+}
 
 #[stable(feature = "rust1", since = "1.0.0")]
 impl Read for Empty {
     #[inline]
-    fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> { Ok(0) }
+    fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
+        Ok(0)
+    }
 
     #[inline]
     unsafe fn initializer(&self) -> Initializer {
@@ -104,7 +112,9 @@ impl Read for Empty {
 #[stable(feature = "rust1", since = "1.0.0")]
 impl BufRead for Empty {
     #[inline]
-    fn fill_buf(&mut self) -> io::Result<&[u8]> { Ok(&[]) }
+    fn fill_buf(&mut self) -> io::Result<&[u8]> {
+        Ok(&[])
+    }
     #[inline]
     fn consume(&mut self, _n: usize) {}
 }
@@ -123,7 +133,9 @@ impl fmt::Debug for Empty {
 ///
 /// [repeat]: fn.repeat.html
 #[stable(feature = "rust1", since = "1.0.0")]
-pub struct Repeat { byte: u8 }
+pub struct Repeat {
+    byte: u8,
+}
 
 /// Creates an instance of a reader that infinitely repeats one byte.
 ///
@@ -140,7 +152,9 @@ pub struct Repeat { byte: u8 }
 /// assert_eq!(buffer, [0b101, 0b101, 0b101]);
 /// ```
 #[stable(feature = "rust1", since = "1.0.0")]
-pub fn repeat(byte: u8) -> Repeat { Repeat { byte } }
+pub fn repeat(byte: u8) -> Repeat {
+    Repeat { byte }
+}
 
 #[stable(feature = "rust1", since = "1.0.0")]
 impl Read for Repeat {
@@ -181,7 +195,9 @@ impl fmt::Debug for Repeat {
 ///
 /// [sink]: fn.sink.html
 #[stable(feature = "rust1", since = "1.0.0")]
-pub struct Sink { _priv: () }
+pub struct Sink {
+    _priv: (),
+}
 
 /// Creates an instance of a writer which will successfully consume all data.
 ///
@@ -198,12 +214,16 @@ pub struct Sink { _priv: () }
 /// assert_eq!(num_bytes, 5);
 /// ```
 #[stable(feature = "rust1", since = "1.0.0")]
-pub fn sink() -> Sink { Sink { _priv: () } }
+pub fn sink() -> Sink {
+    Sink { _priv: () }
+}
 
 #[stable(feature = "rust1", since = "1.0.0")]
 impl Write for Sink {
     #[inline]
-    fn write(&mut self, buf: &[u8]) -> io::Result<usize> { Ok(buf.len()) }
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        Ok(buf.len())
+    }
 
     #[inline]
     fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
@@ -212,7 +232,9 @@ impl Write for Sink {
     }
 
     #[inline]
-    fn flush(&mut self) -> io::Result<()> { Ok(()) }
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
 }
 
 #[stable(feature = "std_debug", since = "1.16.0")]
@@ -225,7 +247,7 @@ impl fmt::Debug for Sink {
 #[cfg(test)]
 mod tests {
     use crate::io::prelude::*;
-    use crate::io::{copy, sink, empty, repeat};
+    use crate::io::{copy, empty, repeat, sink};
 
     #[test]
     fn copy_copies() {

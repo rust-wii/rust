@@ -14,11 +14,11 @@
 
 #![no_std]
 #![unstable(feature = "panic_unwind", issue = "32837")]
-#![doc(html_root_url = "https://doc.rust-lang.org/nightly/",
-       issue_tracker_base_url = "https://github.com/rust-lang/rust/issues/")]
-
+#![doc(
+    html_root_url = "https://doc.rust-lang.org/nightly/",
+    issue_tracker_base_url = "https://github.com/rust-lang/rust/issues/"
+)]
 #![deny(rust_2018_idioms)]
-
 #![feature(core_intrinsics)]
 #![feature(lang_items)]
 #![feature(libc)]
@@ -28,15 +28,14 @@
 #![feature(staged_api)]
 #![feature(std_internals)]
 #![feature(unwind_attributes)]
-
 #![panic_runtime]
 #![feature(panic_runtime)]
 
 use alloc::boxed::Box;
 use core::intrinsics;
 use core::mem;
-use core::raw;
 use core::panic::BoxMeUp;
+use core::raw;
 
 #[macro_use]
 mod macros;
@@ -76,11 +75,12 @@ mod windows;
 // hairy and tightly coupled, for more information see the compiler's
 // implementation of this.
 #[no_mangle]
-pub unsafe extern "C" fn __rust_maybe_catch_panic(f: fn(*mut u8),
-                                                  data: *mut u8,
-                                                  data_ptr: *mut usize,
-                                                  vtable_ptr: *mut usize)
-                                                  -> u32 {
+pub unsafe extern "C" fn __rust_maybe_catch_panic(
+    f: fn(*mut u8),
+    data: *mut u8,
+    data_ptr: *mut usize,
+    vtable_ptr: *mut usize,
+) -> u32 {
     let mut payload = imp::payload();
     if intrinsics::r#try(f, data, &mut payload as *mut _ as *mut _) == 0 {
         0

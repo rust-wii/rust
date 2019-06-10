@@ -14,14 +14,16 @@
 
 
 // Re-export some of our utilities which are expected by other crates.
-// update_panic_count
-pub use crate::panicking::{begin_panic, begin_panic_fmt};
+pub use crate::panicking::{begin_panic, begin_panic_fmt, update_panic_count};
 
 // To reduce the generated code of the new `lang_start`, this function is doing
 // the real work.
 #[cfg(not(test))]
-fn lang_start_internal(main: &(dyn Fn() -> i32 + Sync + crate::panic::RefUnwindSafe),
-                       argc: isize, argv: *const *const u8) -> isize {
+fn lang_start_internal(
+    main: &(dyn Fn() -> i32 + Sync + crate::panic::RefUnwindSafe),
+    argc: isize,
+    argv: *const *const u8,
+) -> isize {
     use crate::panic;
     use crate::sys;
     use crate::sys_common;
@@ -57,10 +59,9 @@ fn lang_start_internal(main: &(dyn Fn() -> i32 + Sync + crate::panic::RefUnwindS
     }
 }
 
-// #[cfg(not(test))]
-// #[lang = "start"]
-// fn lang_start<T: crate::process::Termination + 'static>
-//     (main: fn() -> T, argc: isize, argv: *const *const u8) -> isize
-// {
-//     lang_start_internal(&move || main().report(), argc, argv)
-// }
+// crate::process::Termination +
+#[cfg(not(test))]
+#[lang = "start"]
+fn lang_start<T: 'static>(main: fn() -> T, argc: isize, argv: *const *const u8) -> isize {
+    lang_start_internal(&move || main().report(), argc, argv)
+}

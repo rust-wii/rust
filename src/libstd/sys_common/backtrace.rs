@@ -1,6 +1,5 @@
 /// Common code for printing the backtrace in the same way across the different
 /// supported platforms.
-
 use crate::env;
 use crate::io;
 use crate::io::prelude::*;
@@ -209,9 +208,7 @@ impl<'a, 'b> Printer<'a, 'b> {
                 Path::new(&path_buf)
             }
             #[cfg(not(windows))]
-            Some(BytesOrWideString::Wide(_wide)) => {
-                Path::new("<unknown>")
-            }
+            Some(BytesOrWideString::Wide(_wide)) => Path::new("<unknown>"),
             None => return Ok(()),
         };
         let line = match symbol.lineno() {

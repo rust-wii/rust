@@ -15,7 +15,7 @@
 
 use core::array;
 
-use crate::alloc::{AllocErr, LayoutErr, CannotReallocInPlace};
+use crate::alloc::{AllocErr, CannotReallocInPlace, LayoutErr};
 use crate::any::TypeId;
 use crate::borrow::Cow;
 use crate::cell;
@@ -129,8 +129,11 @@ pub trait Error: Debug + Display {
     /// }
     /// ```
     #[stable(feature = "rust1", since = "1.0.0")]
-    #[rustc_deprecated(since = "1.33.0", reason = "replaced by Error::source, which can support \
-                                                   downcasting")]
+    #[rustc_deprecated(
+        since = "1.33.0",
+        reason = "replaced by Error::source, which can support \
+                  downcasting"
+    )]
     fn cause(&self) -> Option<&dyn Error> {
         self.source()
     }
@@ -194,14 +197,21 @@ pub trait Error: Debug + Display {
     /// }
     /// ```
     #[stable(feature = "error_source", since = "1.30.0")]
-    fn source(&self) -> Option<&(dyn Error + 'static)> { None }
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        None
+    }
 
     /// Gets the `TypeId` of `self`
     #[doc(hidden)]
-    #[unstable(feature = "error_type_id",
-               reason = "this is memory unsafe to override in user code",
-               issue = "60784")]
-    fn type_id(&self, _: private::Internal) -> TypeId where Self: 'static {
+    #[unstable(
+        feature = "error_type_id",
+        reason = "this is memory unsafe to override in user code",
+        issue = "60784"
+    )]
+    fn type_id(&self, _: private::Internal) -> TypeId
+    where
+        Self: 'static,
+    {
         TypeId::of::<Self>()
     }
 }
@@ -317,7 +327,9 @@ impl From<String> for Box<dyn Error + Send + Sync> {
         struct StringError(String);
 
         impl Error for StringError {
-            fn description(&self) -> &str { &self.0 }
+            fn description(&self) -> &str {
+                &self.0
+            }
         }
 
         impl Display for StringError {
@@ -452,30 +464,38 @@ impl<'a> From<Cow<'a, str>> for Box<dyn Error> {
 
 #[unstable(feature = "never_type", issue = "35121")]
 impl Error for ! {
-    fn description(&self) -> &str { *self }
+    fn description(&self) -> &str {
+        *self
+    }
 }
 
-#[unstable(feature = "allocator_api",
-           reason = "the precise API and guarantees it provides may be tweaked.",
-           issue = "32838")]
+#[unstable(
+    feature = "allocator_api",
+    reason = "the precise API and guarantees it provides may be tweaked.",
+    issue = "32838"
+)]
 impl Error for AllocErr {
     fn description(&self) -> &str {
         "memory allocation failed"
     }
 }
 
-#[unstable(feature = "allocator_api",
-           reason = "the precise API and guarantees it provides may be tweaked.",
-           issue = "32838")]
+#[unstable(
+    feature = "allocator_api",
+    reason = "the precise API and guarantees it provides may be tweaked.",
+    issue = "32838"
+)]
 impl Error for LayoutErr {
     fn description(&self) -> &str {
         "invalid parameters to Layout::from_size_align"
     }
 }
 
-#[unstable(feature = "allocator_api",
-           reason = "the precise API and guarantees it provides may be tweaked.",
-           issue = "32838")]
+#[unstable(
+    feature = "allocator_api",
+    reason = "the precise API and guarantees it provides may be tweaked.",
+    issue = "32838"
+)]
 impl Error for CannotReallocInPlace {
     fn description(&self) -> &str {
         CannotReallocInPlace::description(self)
@@ -484,7 +504,9 @@ impl Error for CannotReallocInPlace {
 
 #[stable(feature = "rust1", since = "1.0.0")]
 impl Error for str::ParseBoolError {
-    fn description(&self) -> &str { "failed to parse bool" }
+    fn description(&self) -> &str {
+        "failed to parse bool"
+    }
 }
 
 #[stable(feature = "rust1", since = "1.0.0")]
@@ -619,9 +641,7 @@ impl dyn Error + 'static {
     #[inline]
     pub fn downcast_ref<T: Error + 'static>(&self) -> Option<&T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&*(self as *const dyn Error as *const T))
-            }
+            unsafe { Some(&*(self as *const dyn Error as *const T)) }
         } else {
             None
         }
@@ -633,9 +653,7 @@ impl dyn Error + 'static {
     #[inline]
     pub fn downcast_mut<T: Error + 'static>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&mut *(self as *mut dyn Error as *mut T))
-            }
+            unsafe { Some(&mut *(self as *mut dyn Error as *mut T)) }
         } else {
             None
         }
@@ -756,9 +774,7 @@ impl dyn Error {
     #[unstable(feature = "error_iter", issue = "58520")]
     #[inline]
     pub fn iter_chain(&self) -> ErrorIter<'_> {
-        ErrorIter {
-            current: Some(self),
-        }
+        ErrorIter { current: Some(self) }
     }
 
     /// Returns an iterator starting with the [`source`] of this error
@@ -830,9 +846,7 @@ impl dyn Error {
     #[inline]
     #[unstable(feature = "error_iter", issue = "58520")]
     pub fn iter_sources(&self) -> ErrorIter<'_> {
-        ErrorIter {
-            current: self.source(),
-        }
+        ErrorIter { current: self.source() }
     }
 }
 
@@ -860,8 +874,7 @@ impl dyn Error + Send {
     #[inline]
     #[stable(feature = "error_downcast", since = "1.3.0")]
     /// Attempt to downcast the box to a concrete type.
-    pub fn downcast<T: Error + 'static>(self: Box<Self>)
-                                        -> Result<Box<T>, Box<dyn Error + Send>> {
+    pub fn downcast<T: Error + 'static>(self: Box<Self>) -> Result<Box<T>, Box<dyn Error + Send>> {
         let err: Box<dyn Error> = self;
         <dyn Error>::downcast(err).map_err(|s| unsafe {
             // reapply the Send marker
@@ -874,8 +887,7 @@ impl dyn Error + Send + Sync {
     #[inline]
     #[stable(feature = "error_downcast", since = "1.3.0")]
     /// Attempt to downcast the box to a concrete type.
-    pub fn downcast<T: Error + 'static>(self: Box<Self>)
-                                        -> Result<Box<T>, Box<Self>> {
+    pub fn downcast<T: Error + 'static>(self: Box<Self>) -> Result<Box<T>, Box<Self>> {
         let err: Box<dyn Error> = self;
         <dyn Error>::downcast(err).map_err(|s| unsafe {
             // reapply the Send+Sync marker
@@ -906,10 +918,14 @@ mod tests {
     }
 
     impl Error for A {
-        fn description(&self) -> &str { "A-desc" }
+        fn description(&self) -> &str {
+            "A-desc"
+        }
     }
     impl Error for B {
-        fn description(&self) -> &str { "A-desc" }
+        fn description(&self) -> &str {
+            "A-desc"
+        }
     }
 
     #[test]

@@ -23,20 +23,24 @@ macro_rules! rtabort {
 }
 
 macro_rules! rtassert {
-    ($e:expr) => (if !$e {
-        rtabort!(concat!("assertion failed: ", stringify!($e)));
-    })
+    ($e:expr) => {
+        if !$e {
+            rtabort!(concat!("assertion failed: ", stringify!($e)));
+        }
+    };
 }
 
 #[allow(unused_macros)] // not used on all platforms
 macro_rules! rtunwrap {
-    ($ok:ident, $e:expr) => (match $e {
-        $ok(v) => v,
-        ref err => {
-            let err = err.as_ref().map(|_|()); // map Ok/Some which might not be Debug
-            rtabort!(concat!("unwrap failed: ", stringify!($e), " = {:?}"), err)
-        },
-    })
+    ($ok:ident, $e:expr) => {
+        match $e {
+            $ok(v) => v,
+            ref err => {
+                let err = err.as_ref().map(|_| ()); // map Ok/Some which might not be Debug
+                rtabort!(concat!("unwrap failed: ", stringify!($e), " = {:?}"), err)
+            }
+        }
+    };
 }
 
 pub mod alloc;
@@ -114,7 +118,7 @@ pub trait FromInner<Inner> {
 /// that the closure could not be registered, meaning that it is not scheduled
 /// to be run.
 pub fn at_exit<F: FnOnce() + Send + 'static>(f: F) -> Result<(), ()> {
-    if at_exit_imp::push(Box::new(f)) {Ok(())} else {Err(())}
+    if at_exit_imp::push(Box::new(f)) { Ok(()) } else { Err(()) }
 }
 
 /// One-time runtime cleanup.
@@ -142,6 +146,5 @@ pub fn mul_div_u64(value: u64, numer: u64, denom: u64) -> u64 {
 
 #[test]
 fn test_muldiv() {
-    assert_eq!(mul_div_u64( 1_000_000_000_001, 1_000_000_000, 1_000_000),
-               1_000_000_000_001_000);
+    assert_eq!(mul_div_u64(1_000_000_000_001, 1_000_000_000, 1_000_000), 1_000_000_000_001_000);
 }

@@ -4,22 +4,22 @@
 use crate::borrow::Cow;
 use crate::ffi::{OsStr, OsString};
 use crate::fmt;
-use crate::str;
 use crate::mem;
 use crate::rc::Rc;
+use crate::str;
 use crate::sync::Arc;
-use crate::sys_common::{FromInner, IntoInner, AsInner};
 use crate::sys_common::bytestring::debug_fmt_bytestring;
+use crate::sys_common::{AsInner, FromInner, IntoInner};
 
 use core::str::lossy::Utf8Lossy;
 
 #[derive(Clone, Hash)]
 pub(crate) struct Buf {
-    pub inner: Vec<u8>
+    pub inner: Vec<u8>,
 }
 
 pub(crate) struct Slice {
-    pub inner: [u8]
+    pub inner: [u8],
 }
 
 impl fmt::Debug for Slice {
@@ -58,7 +58,6 @@ impl AsInner<[u8]> for Buf {
     }
 }
 
-
 impl Buf {
     pub fn from_string(s: String) -> Buf {
         Buf { inner: s.into_bytes() }
@@ -66,9 +65,7 @@ impl Buf {
 
     #[inline]
     pub fn with_capacity(capacity: usize) -> Buf {
-        Buf {
-            inner: Vec::with_capacity(capacity)
-        }
+        Buf { inner: Vec::with_capacity(capacity) }
     }
 
     #[inline]
@@ -106,7 +103,7 @@ impl Buf {
     }
 
     pub fn into_string(self) -> Result<String, Buf> {
-        String::from_utf8(self.inner).map_err(|p| Buf { inner: p.into_bytes() } )
+        String::from_utf8(self.inner).map_err(|p| Buf { inner: p.into_bytes() })
     }
 
     pub fn push_slice(&mut self, s: &Slice) {
