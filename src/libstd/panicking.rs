@@ -154,8 +154,6 @@ pub fn take_hook() -> Box<dyn Fn(&PanicInfo<'_>) + 'static + Sync + Send> {
             Hook::Custom(ptr) => Box::from_raw(ptr),
         }
     }
-
-    unimplemented!()
 }
 
 fn default_hook(info: &PanicInfo<'_>) {
@@ -218,14 +216,16 @@ fn default_hook(info: &PanicInfo<'_>) {
 #[doc(hidden)]
 #[unstable(feature = "update_panic_count", issue = "0")]
 pub fn update_panic_count(amt: isize) -> usize {
-    use crate::cell::Cell;
-    thread_local! { static PANIC_COUNT: Cell<usize> = Cell::new(0) }
+    // use crate::cell::Cell;
+    // thread_local! { static PANIC_COUNT: Cell<usize> = Cell::new(0) }
 
-    PANIC_COUNT.with(|c| {
-        let next = (c.get() as isize + amt) as usize;
-        c.set(next);
-        return next;
-    })
+    // PANIC_COUNT.with(|c| {
+    //     let next = (c.get() as isize + amt) as usize;
+    //     c.set(next);
+    //     return next;
+    // })
+    
+    unimplemented!()
 }
 
 #[cfg(test)]

@@ -20,10 +20,10 @@ pub use crate::panicking::{begin_panic, begin_panic_fmt, update_panic_count};
 // the real work.
 #[cfg(not(test))]
 fn lang_start_internal(
-    main: &(dyn Fn() -> i32 + Sync + crate::panic::RefUnwindSafe),
+    main: &(dyn Fn() + Sync + crate::panic::RefUnwindSafe),
     argc: isize,
     argv: *const *const u8,
-) -> isize {
+) {
     use crate::panic;
     use crate::sys;
     use crate::sys_common;
@@ -55,13 +55,13 @@ fn lang_start_internal(
         let exit_code = panic::catch_unwind(move || main());
 
         sys_common::cleanup();
-        exit_code.unwrap_or(101) as isize
+        exit_code.unwrap()
     }
 }
 
-// crate::process::Termination +
+// crate::process::Termination + .report()
 #[cfg(not(test))]
 #[lang = "start"]
-fn lang_start<T: 'static>(main: fn() -> T, argc: isize, argv: *const *const u8) -> isize {
-    lang_start_internal(&move || main().report(), argc, argv)
+fn lang_start<T: 'static>(main: fn(), argc: isize, argv: *const *const u8) {
+    lang_start_internal(&move || main(), argc, argv)
 }
