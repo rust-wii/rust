@@ -733,8 +733,7 @@ pub fn yield_now() {
 #[inline]
 #[stable(feature = "rust1", since = "1.0.0")]
 pub fn panicking() -> bool {
-    unimplemented!()
-    //panicking::panicking()
+    panicking::panicking()
 }
 
 /// Puts the current thread to sleep for at least the specified amount of time.

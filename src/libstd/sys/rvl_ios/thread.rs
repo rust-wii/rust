@@ -76,7 +76,7 @@ impl Thread {
     }
 
     pub fn yield_now() {
-        let ret = unsafe { ogc_sys::LWP_YieldThread() };
+        unsafe { ogc_sys::LWP_YieldThread(); }
         // debug_assert_eq!(ret, 0);
     }
 
