@@ -206,6 +206,7 @@
 // Don't link to std. We are std.
 #![no_std]
 //#![warn(deprecated_in_future)] // FIXME: std still has quite a few uses of `mem::uninitialized`
+#![allow(dead_code)]
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
 #![deny(intra_doc_link_resolution_failure)] // rustdoc is run without -D warnings
@@ -497,16 +498,16 @@ pub mod rt;
 // `std_detect` depends on libstd, but the contents of this module are
 // set up in such a way that directly pulling it here works such that the
 // crate uses the this crate as its libstd.
-// #[path = "../stdsimd/crates/std_detect/src/mod.rs"]
-// #[allow(missing_debug_implementations, missing_docs, dead_code)]
-// #[unstable(feature = "stdsimd", issue = "48556")]
-// #[cfg(not(test))]
-// mod std_detect;
+#[path = "../stdsimd/crates/std_detect/src/mod.rs"]
+#[allow(missing_debug_implementations, missing_docs, dead_code)]
+#[unstable(feature = "stdsimd", issue = "48556")]
+#[cfg(not(test))]
+mod std_detect;
 
-// #[doc(hidden)]
-// #[unstable(feature = "stdsimd", issue = "48556")]
-// #[cfg(not(test))]
-// pub use std_detect::detect;
+#[doc(hidden)]
+#[unstable(feature = "stdsimd", issue = "48556")]
+#[cfg(not(test))]
+pub use std_detect::detect;
 
 // Include a number of private modules that exist solely to provide
 // the rustdoc documentation for primitive types. Using `include!`
