@@ -96,7 +96,7 @@ dependencies = [
 [[package]]
 name = "ogc-sys"
 version = "0.1.0"
-source = "git+https://github.com/rust-wii/ogc-sys.git#7c2bba4f07b1443031d49faf69e8eeff88f1009d"
+source = "git+https://github.com/rust-wii/ogc-rs.git#fbfe48e464de685b0e828c9493399d9fc96aefc6"
 dependencies = [
  "libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)",
 ]
@@ -247,7 +247,7 @@ dependencies = [
  "cc 1.0.37 (registry+https://github.com/rust-lang/crates.io-index)",
  "hashbrown 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)",
- "ogc-sys 0.1.0 (git+https://github.com/rust-wii/ogc-sys.git)",
+ "ogc-sys 0.1.0 (git+https://github.com/rust-wii/ogc-rs.git)",
  "panic_abort 0.0.0",
  "panic_unwind 0.0.0",
  "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -294,7 +294,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum hashbrown 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9529213c67695ca2d146e6f263b7b72df8fa973368beadf767e8ed80c03f2f36"
 "checksum libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)" = "<none>"
 "checksum libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)" = "6281b86796ba5e4366000be6e9e18bf35580adf9e63fbe2294aadb587613a319"
-"checksum ogc-sys 0.1.0 (git+https://github.com/rust-wii/ogc-sys.git)" = "<none>"
+"checksum ogc-sys 0.1.0 (git+https://github.com/rust-wii/ogc-rs.git)" = "<none>"
 "checksum rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)" = "6d71dacdc3c88c1fde3885a3be3fbab9f35724e6ce99467f7d9c5026132184ca"
 "checksum rand_chacha 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "556d3a1ca6600bfcbab7c7c91ccb085ac7fbbcd70e008a98742e7847f4f7bcef"
 "checksum rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7a6fdeb83b075e8266dcc8762c22776f6877a63111121f5f8c7411e5be7eed4b"

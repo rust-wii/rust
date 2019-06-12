@@ -15,17 +15,17 @@ crate-type = ["dylib", "rlib"]
 
 [dependencies]
 #alloc = { path = "../liballoc" }
-panic_unwind = { path = "../libpanic_unwind", optional = true }
-panic_abort = { path = "../libpanic_abort" }
 #core = { path = "../libcore" }
 #libc = { version = "0.2.51", default-features = false, features = ['rustc-dep-of-std'] }
 #compiler_builtins = { version = "0.1.15" }
 #profiler_builtins = { path = "../libprofiler_builtins", optional = true }
+panic_unwind = { path = "../libpanic_unwind", optional = true }
+panic_abort = { path = "../libpanic_abort" }
 unwind = { path = "../libunwind" }
 hashbrown = { version = "0.4.0", features = ['rustc-dep-of-std'] }
 
 [dependencies.backtrace]
-version = "0.3.25"
+version = "0.3.30"
 default-features = false # don't use coresymbolication on OSX
 features = [
   "rustc-dep-of-std", # enable build support for integrating into libstd
@@ -43,10 +43,10 @@ default-features = false
 features = ["rustc-dep-of-std"]
 
 [dependencies.ogc-sys]
-git = "https://github.com/rust-wii/ogc-sys.git"
+git = "https://github.com/rust-wii/ogc-rs.git"
 
 [dev-dependencies]
-rand = "0.6.1"
+rand = "0.6.5"
 
 [build-dependencies]
 cc = "1.0"
@@ -54,9 +54,9 @@ cc = "1.0"
 [features]
 default = ["std_detect_file_io", "std_detect_dlsym_getauxval"]
 
-panic-unwind = ["panic_unwind"]
 #profiler = ["profiler_builtins"]
 #compiler-builtins-c = ["alloc/compiler-builtins-c"]
+panic-unwind = ["panic_unwind"]
 llvm-libunwind = ["unwind/llvm-libunwind"]
 
 # Make panics and failed asserts immediately abort without formatting any message
