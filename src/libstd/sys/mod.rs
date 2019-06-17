@@ -26,27 +26,6 @@ cfg_if! {
     if #[cfg(target_os = "rvl-ios")] {
         mod rvl_ios;
         pub use self::rvl_ios::*;
-    } else if #[cfg(unix)] {
-        mod unix;
-        pub use self::unix::*;
-    } else if #[cfg(windows)] {
-        mod windows;
-        pub use self::windows::*;
-    } else if #[cfg(target_os = "cloudabi")] {
-        mod cloudabi;
-        pub use self::cloudabi::*;
-    } else if #[cfg(target_os = "redox")] {
-        mod redox;
-        pub use self::redox::*;
-    } else if #[cfg(target_os = "wasi")] {
-        mod wasi;
-        pub use self::wasi::*;
-    } else if #[cfg(target_arch = "wasm32")] {
-        mod wasm;
-        pub use self::wasm::*;
-    } else if #[cfg(all(target_vendor = "fortanix", target_env = "sgx"))] {
-        mod sgx;
-        pub use self::sgx::*;
     } else {
         compile_error!("libstd doesn't compile for this platform yet");
     }

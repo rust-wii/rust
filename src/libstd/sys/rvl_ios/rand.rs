@@ -18,7 +18,7 @@ pub fn hashmap_random_keys() -> (u64, u64) {
           not(target_os = "fuchsia")))]
 mod imp {
     //use crate::fs::File;
-    use crate::io::Read;
+    //use crate::io::Read;
 
     #[cfg(any(target_os = "linux", target_os = "android"))]
     fn getrandom(buf: &mut [u8]) -> libc::c_long {

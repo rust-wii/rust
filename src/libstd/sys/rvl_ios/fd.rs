@@ -1,7 +1,7 @@
 #![unstable(reason = "not public", issue = "0", feature = "fd")]
 
 use crate::cmp;
-use crate::io::{self, Read, Initializer, IoSlice, IoSliceMut};
+use crate::io::{self, Read, Initializer};
 use crate::mem;
 use crate::sync::atomic::{AtomicBool, Ordering};
 use crate::sys::cvt;

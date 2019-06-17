@@ -1,6 +1,6 @@
 #![allow(dead_code)] // not used on all platforms
 
-use crate::mem;
+//use crate::mem;
 
 pub type Key = libc::pthread_key_t;
 

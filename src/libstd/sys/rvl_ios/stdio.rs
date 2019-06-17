@@ -1,4 +1,4 @@
-use crate::io::{self, IoSlice, IoSliceMut};
+use crate::io;
 use crate::sys::fd::FileDesc;
 use crate::mem::ManuallyDrop;
 
