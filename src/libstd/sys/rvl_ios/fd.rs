@@ -46,9 +46,9 @@ impl FileDesc {
 
     pub fn read(&self, buf: &mut [u8]) -> io::Result<usize> {
         let ret = cvt(unsafe {
-            libc::read(self.fd,
+            ogc_sys::net_read(self.fd,
                        buf.as_mut_ptr() as *mut c_void,
-                       cmp::min(buf.len(), max_len()))
+                       cmp::min(buf.len() as i32, max_len() as i32))
         })?;
         Ok(ret as usize)
     }
@@ -108,9 +108,9 @@ impl FileDesc {
 
     pub fn write(&self, buf: &[u8]) -> io::Result<usize> {
         let ret = cvt(unsafe {
-            libc::write(self.fd,
+            ogc_sys::net_write(self.fd,
                         buf.as_ptr() as *const c_void,
-                        cmp::min(buf.len(), max_len()))
+                        cmp::min(buf.len() as i32, max_len() as i32))
         })?;
         Ok(ret as usize)
     }
@@ -163,62 +163,34 @@ impl FileDesc {
         }
     }
 
-    #[cfg(target_os = "linux")]
     pub fn get_cloexec(&self) -> io::Result<bool> {
         unsafe {
-            Ok((cvt(libc::fcntl(self.fd, libc::F_GETFD))? & libc::FD_CLOEXEC) != 0)
+            Ok((cvt(ogc_sys::net_fcntl(self.fd, libc::F_GETFD as u32, 0))? & libc::FD_CLOEXEC) != 0)
         }
     }
 
-    #[cfg(not(any(target_env = "newlib",
-                  target_os = "solaris",
-                  target_os = "emscripten",
-                  target_os = "fuchsia",
-                  target_os = "l4re",
-                  target_os = "haiku")))]
     pub fn set_cloexec(&self) -> io::Result<()> {
         unsafe {
-            cvt(libc::ioctl(self.fd, libc::FIOCLEX))?;
-            Ok(())
-        }
-    }
-    #[cfg(any(target_env = "newlib",
-              target_os = "solaris",
-              target_os = "emscripten",
-              target_os = "fuchsia",
-              target_os = "l4re",
-              target_os = "haiku"))]
-    pub fn set_cloexec(&self) -> io::Result<()> {
-        unsafe {
-            let previous = cvt(libc::fcntl(self.fd, libc::F_GETFD))?;
+            let previous = cvt(ogc_sys::net_fcntl(self.fd, libc::F_GETFD as u32, 0))?;
             let new = previous | libc::FD_CLOEXEC;
             if new != previous {
-                cvt(libc::fcntl(self.fd, libc::F_SETFD, new))?;
+                cvt(ogc_sys::net_fcntl(self.fd, libc::F_SETFD as u32, new as u32))?;
             }
             Ok(())
         }
     }
 
-    #[cfg(target_os = "linux")]
+    
     pub fn set_nonblocking(&self, nonblocking: bool) -> io::Result<()> {
         unsafe {
-            let v = nonblocking as c_int;
-            cvt(libc::ioctl(self.fd, libc::FIONBIO, &v))?;
-            Ok(())
-        }
-    }
-
-    #[cfg(not(target_os = "linux"))]
-    pub fn set_nonblocking(&self, nonblocking: bool) -> io::Result<()> {
-        unsafe {
-            let previous = cvt(libc::fcntl(self.fd, libc::F_GETFL))?;
+            let previous = cvt(ogc_sys::net_fcntl(self.fd, libc::F_GETFL as u32, 0))?;
             let new = if nonblocking {
                 previous | libc::O_NONBLOCK
             } else {
                 previous & !libc::O_NONBLOCK
             };
             if new != previous {
-                cvt(libc::fcntl(self.fd, libc::F_SETFL, new))?;
+                cvt(ogc_sys::net_fcntl(self.fd, libc::F_SETFL as u32, new as u32))?;
             }
             Ok(())
         }
@@ -297,6 +269,6 @@ impl Drop for FileDesc {
         // the file descriptor was closed or not, and if we retried (for
         // something like EINTR), we might close another valid file descriptor
         // opened after we closed ours.
-        let _ = unsafe { libc::close(self.fd) };
+        let _ = unsafe { ogc_sys::net_close(self.fd) };
     }
 }

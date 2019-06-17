@@ -29,11 +29,6 @@ use crate::sys::{self, cvt};
 use crate::sys::net::Socket;
 use crate::sys_common::{self, AsInner, FromInner, IntoInner};
 
-#[cfg(any(target_os = "linux", target_os = "android",
-          target_os = "dragonfly", target_os = "freebsd",
-          target_os = "openbsd", target_os = "netbsd",
-          target_os = "haiku"))]
-use libc::MSG_NOSIGNAL;
 #[cfg(not(any(target_os = "linux", target_os = "android",
               target_os = "dragonfly", target_os = "freebsd",
               target_os = "openbsd", target_os = "netbsd",
@@ -1202,7 +1197,7 @@ impl UnixDatagram {
         let mut count = 0;
         let addr = SocketAddr::new(|addr, len| {
             unsafe {
-                count = libc::recvfrom(*self.0.as_inner(),
+                count = ogc_sys::net_recvfrom(*self.0.as_inner(),
                                        buf.as_mut_ptr() as *mut _,
                                        buf.len(),
                                        0,
@@ -1257,7 +1252,7 @@ impl UnixDatagram {
             unsafe {
                 let (addr, len) = sockaddr_un(path)?;
 
-                let count = cvt(libc::sendto(*d.0.as_inner(),
+                let count = cvt(ogc_sys::net_sendto(*d.0.as_inner(),
                                              buf.as_ptr() as *const _,
                                              buf.len(),
                                              MSG_NOSIGNAL,

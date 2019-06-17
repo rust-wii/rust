@@ -247,7 +247,7 @@
 #![feature(cfg_target_has_atomic)]
 #![feature(cfg_target_thread_local)]
 #![feature(char_error_internals)]
-//#![feature(checked_duration_since)]
+#![feature(checked_duration_since)]
 #![feature(clamp)]
 #![feature(compiler_builtins_lib)]
 #![feature(concat_idents)]
@@ -457,7 +457,7 @@ pub mod error;
 pub mod ffi;
 //pub mod fs;
 pub mod io;
-//pub mod net;
+pub mod net;
 pub mod num;
 pub mod os;
 pub mod panic;
