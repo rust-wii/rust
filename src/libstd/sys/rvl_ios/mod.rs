@@ -3,7 +3,7 @@
 use crate::io::ErrorKind;
 
 #[cfg(any(rustdoc, target_os = "rvl-ios"))] pub use crate::os::rvl_ios as platform;
-#[cfg(all(not(rustdoc), target_os = "l4re"))]      pub use crate::os::linux as platform;
+#[cfg(all(not(rustdoc), target_os = "l4re"))]      pub use crate::os::rvl_ios as platform;
 
 pub use self::rand::hashmap_random_keys;
 pub use libc::strlen;
@@ -59,7 +59,7 @@ pub fn init() {
 
     #[cfg(not(any(target_os = "emscripten", target_os = "fuchsia")))]
     unsafe fn reset_sigpipe() {
-        assert!(signal(libc::SIGPIPE, libc::SIG_IGN) != libc::SIG_ERR);
+        assert!(signal(ogc_sys::SIGPIPE as i32, libc::SIG_IGN) != libc::SIG_ERR);
     }
     #[cfg(any(target_os = "emscripten", target_os = "fuchsia"))]
     unsafe fn reset_sigpipe() {}

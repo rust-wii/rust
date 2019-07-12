@@ -25,15 +25,16 @@ unsafe impl Sync for Thread {}
 // The pthread_attr_setstacksize symbol doesn't exist in the libogc libc,
 // so we have to not link to it to satisfy the linker.
 #[cfg(not(target_os = "rvl-ios"))]
-unsafe fn pthread_attr_setstacksize(attr: *mut libc::pthread_attr_t,
-                                    stack_size: libc::size_t) -> libc::c_int {
+unsafe fn pthread_attr_setstacksize(
+    attr: *mut libc::pthread_attr_t,
+    stack_size: libc::size_t,
+) -> libc::c_int {
     libc::pthread_attr_setstacksize(attr, stack_size)
 }
 
 impl Thread {
     // unsafe: see thread::Builder::spawn_unchecked for safety requirements
-    pub unsafe fn new(stack: usize, p: Box<dyn FnOnce()>)
-                          -> io::Result<Thread> {
+    pub unsafe fn new(stack: usize, p: Box<dyn FnOnce()>) -> io::Result<Thread> {
         let p = box p;
         let mut native: libc::pthread_t = mem::zeroed();
         // let mut attr: libc::pthread_attr_t = mem::zeroed();
@@ -58,8 +59,14 @@ impl Thread {
         //     }
         // };
 
-        let ret = ogc_sys::LWP_CreateThread(&mut native, Some(thread_start),
-                                       &*p as *const _ as *mut _, ptr::null_mut(), stack_size as u32, 0);
+        let ret = ogc_sys::LWP_CreateThread(
+            &mut native,
+            Some(thread_start),
+            &*p as *const _ as *mut _,
+            ptr::null_mut(),
+            stack_size as u32,
+            0,
+        );
         // assert_eq!(libc::pthread_attr_destroy(&mut attr), 0);
 
         return if ret != 0 {
@@ -69,23 +76,29 @@ impl Thread {
             Ok(Thread { id: native })
         };
 
-        extern fn thread_start(main: *mut libc::c_void) -> *mut libc::c_void {
-            unsafe { start_thread(main as *mut u8); }
+        extern "C" fn thread_start(main: *mut libc::c_void) -> *mut libc::c_void {
+            unsafe {
+                start_thread(main as *mut u8);
+            }
             ptr::null_mut()
         }
     }
 
     pub fn yield_now() {
-        unsafe { ogc_sys::LWP_YieldThread(); }
+        unsafe {
+            ogc_sys::LWP_YieldThread();
+        }
         // debug_assert_eq!(ret, 0);
     }
 
-    #[cfg(any(target_env = "newlib",
-              target_os = "solaris",
-              target_os = "haiku",
-              target_os = "l4re",
-              target_os = "emscripten",
-              target_os = "hermit"))]
+    #[cfg(any(
+        target_env = "newlib",
+        target_os = "solaris",
+        target_os = "haiku",
+        target_os = "l4re",
+        target_os = "emscripten",
+        target_os = "hermit"
+    ))]
     pub fn set_name(_name: &CStr) {
         // Newlib, Illumos, Haiku, and Emscripten have no way to set a thread name.
     }
@@ -118,12 +131,13 @@ impl Thread {
         unsafe {
             let ret = ogc_sys::LWP_JoinThread(self.id, ptr::null_mut());
             mem::forget(self);
-            assert!(ret == 0,
-                    "failed to join thread: {}", io::Error::from_raw_os_error(ret));
+            assert!(ret == 0, "failed to join thread: {}", io::Error::from_raw_os_error(ret));
         }
     }
 
-    pub fn id(&self) -> libc::pthread_t { self.id }
+    pub fn id(&self) -> libc::pthread_t {
+        self.id
+    }
 
     pub fn into_id(self) -> libc::pthread_t {
         let id = self.id;
@@ -145,20 +159,26 @@ impl Drop for Thread {
 pub mod guard {
     use crate::ops::Range;
     pub type Guard = Range<usize>;
-    pub unsafe fn current() -> Option<Guard> { None }
-    pub unsafe fn init() -> Option<Guard> { None }
+    pub unsafe fn current() -> Option<Guard> {
+        None
+    }
+    pub unsafe fn init() -> Option<Guard> {
+        None
+    }
 }
 
-#[cfg(any(all(target_os = "linux", not(target_env = "musl")),
-          target_os = "freebsd",
-          target_os = "macos",
-          all(target_os = "netbsd", not(target_vendor = "rumprun")),
-          target_os = "openbsd",
-          target_os = "solaris"))]
+#[cfg(any(
+    all(target_os = "linux", not(target_env = "musl")),
+    target_os = "freebsd",
+    target_os = "macos",
+    all(target_os = "netbsd", not(target_vendor = "rumprun")),
+    target_os = "openbsd",
+    target_os = "solaris"
+))]
 #[cfg_attr(test, allow(dead_code))]
 pub mod guard {
     use libc::{mmap, mprotect};
-    use libc::{PROT_NONE, PROT_READ, PROT_WRITE, MAP_PRIVATE, MAP_ANON, MAP_FAILED, MAP_FIXED};
+    use libc::{MAP_ANON, MAP_FAILED, MAP_FIXED, MAP_PRIVATE, PROT_NONE, PROT_READ, PROT_WRITE};
 
     use crate::ops::Range;
     use crate::sys::os;
@@ -218,7 +238,7 @@ pub mod guard {
     //     assert_eq!(libc::pthread_attr_destroy(&mut attr), 0);
     //     ret
     // }
-    
+
     #[cfg(target_os = "rvl-ios")]
     unsafe fn get_stack_start() -> Option<*mut libc::c_void> {
         // At the moment, libogc doesnt seem to have a reliable way to get the stack.
@@ -271,8 +291,14 @@ pub mod guard {
             // than the initial mmap() used, so we mmap() here with
             // read/write permissions and only then mprotect() it to
             // no permissions at all. See issue #50313.
-            let result = mmap(stackaddr, PAGE_SIZE, PROT_READ | PROT_WRITE,
-                              MAP_PRIVATE | MAP_ANON | MAP_FIXED, -1, 0);
+            let result = mmap(
+                stackaddr,
+                PAGE_SIZE,
+                PROT_READ | PROT_WRITE,
+                MAP_PRIVATE | MAP_ANON | MAP_FIXED,
+                -1,
+                0,
+            );
             if result != stackaddr || result == MAP_FAILED {
                 panic!("failed to allocate a guard page");
             }
@@ -283,20 +309,18 @@ pub mod guard {
             }
 
             let guardaddr = stackaddr as usize;
-            let offset = if cfg!(target_os = "freebsd") {
-                2
-            } else {
-                1
-            };
+            let offset = if cfg!(target_os = "freebsd") { 2 } else { 1 };
 
             Some(guardaddr..guardaddr + offset * PAGE_SIZE)
         }
     }
 
-    #[cfg(any(target_os = "macos",
-              target_os = "openbsd",
-              target_os = "solaris",
-              target_os = "rvl-ios"))]
+    #[cfg(any(
+        target_os = "macos",
+        target_os = "openbsd",
+        target_os = "solaris",
+        target_os = "rvl-ios"
+    ))]
     pub unsafe fn current() -> Option<Guard> {
         let stackaddr = get_stack_start()? as usize;
         Some(stackaddr - PAGE_SIZE..stackaddr)
@@ -349,8 +373,7 @@ pub mod guard {
 
 // No point in looking up __pthread_get_minstack() on non-glibc
 // platforms.
-#[cfg(all(not(target_os = "linux"),
-          not(target_os = "netbsd")))]
+#[cfg(all(not(target_os = "linux"), not(target_os = "netbsd")))]
 fn min_stack_size() -> usize {
-    libc::PTHREAD_STACK_MIN
+    16384
 }
