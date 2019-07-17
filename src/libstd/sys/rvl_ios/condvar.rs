@@ -38,29 +38,29 @@ impl Condvar {
         // assert_eq!(r, 0);
         // let r = libc::pthread_condattr_destroy(&mut attr);
         // assert_eq!(r, 0);
-        let r = ogc_sys::LWP_CondInit(self.inner.get() as *mut u32);
-        assert_eq!(r, 0);
+        // let r = ogc_sys::LWP_CondInit(self.inner.get() as *mut u32);
+        // assert_eq!(r, 0);
     }
 
     #[inline]
     pub unsafe fn notify_one(&self) {
         // let r = libc::pthread_cond_signal(self.inner.get());
-        let r = ogc_sys::LWP_CondSignal(self.inner.get() as u32);
-        debug_assert_eq!(r, 0);
+        // let r = ogc_sys::LWP_CondSignal(self.inner.get() as u32);
+        // debug_assert_eq!(r, 0);
     }
 
     #[inline]
     pub unsafe fn notify_all(&self) {
         // let r = libc::pthread_cond_broadcast(self.inner.get());
-        let r = ogc_sys::LWP_CondBroadcast(self.inner.get() as u32);
-        debug_assert_eq!(r, 0);
+        // let r = ogc_sys::LWP_CondBroadcast(self.inner.get() as u32);
+        // debug_assert_eq!(r, 0);
     }
 
     #[inline]
     pub unsafe fn wait(&self, mutex: &Mutex) {
         // let r = libc::pthread_cond_wait(self.inner.get(), mutex::raw(mutex));
-        let r = ogc_sys::LWP_CondWait(self.inner.get() as u32, mutex::raw(mutex) as u32);
-        debug_assert_eq!(r, 0);
+        // let r = ogc_sys::LWP_CondWait(self.inner.get() as u32, mutex::raw(mutex) as u32);
+        // debug_assert_eq!(r, 0);
     }
 
     // This implementation is used on systems that support pthread_condattr_setclock
@@ -95,7 +95,7 @@ impl Condvar {
     #[inline]
     pub unsafe fn destroy(&self) {
         // let r = libc::pthread_cond_destroy(self.inner.get());
-        let r = ogc_sys::LWP_CondDestroy(self.inner.get() as u32);
-        debug_assert_eq!(r, 0);
+        // let r = ogc_sys::LWP_CondDestroy(self.inner.get() as u32);
+        // debug_assert_eq!(r, 0);
     }
 }

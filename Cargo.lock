@@ -68,7 +68,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "hashbrown"
-version = "0.5.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "compiler_builtins 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -80,18 +80,14 @@ dependencies = [
 name = "libc"
 version = "0.2.56"
 source = "git+https://github.com/rust-wii/libc.git?branch=wii#172289d8db97f950f22b4d42598f056e70759a18"
-
-[[package]]
-name = "libc"
-version = "0.2.58"
-source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "rustc-std-workspace-core 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "libc"
-version = "0.2.59"
+version = "0.2.58"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "rustc-std-workspace-core 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -108,14 +104,14 @@ dependencies = [
 name = "panic_abort"
 version = "0.0.0"
 dependencies = [
- "libc 0.2.59",
+ "libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)",
 ]
 
 [[package]]
 name = "panic_unwind"
 version = "0.0.0"
 dependencies = [
- "libc 0.2.59",
+ "libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)",
  "unwind 0.0.0",
 ]
 
@@ -248,8 +244,8 @@ version = "0.0.0"
 dependencies = [
  "backtrace 0.3.32 (registry+https://github.com/rust-lang/crates.io-index)",
  "cc 1.0.37 (registry+https://github.com/rust-lang/crates.io-index)",
- "hashbrown 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.59",
+ "hashbrown 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)",
  "ogc-sys 0.1.0 (git+https://github.com/rust-wii/ogc-rs.git)",
  "panic_abort 0.0.0",
  "panic_unwind 0.0.0",
@@ -262,7 +258,7 @@ name = "unwind"
 version = "0.0.0"
 dependencies = [
  "cc 1.0.37 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.59",
+ "libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)",
 ]
 
 [[package]]
@@ -294,7 +290,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum cloudabi 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "ddfc5b9aa5d4507acaf872de71051dfd0e309860e88966e1051e462a077aac4f"
 "checksum compiler_builtins 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)" = "e899b947d7e71c3d35c0b6194d64025b84946640510e215090c815b20828964e"
 "checksum fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a06f77d526c1a601b7c4cdd98f54b5eaabffc14d5f2f0296febdc7f357c6d3ba"
-"checksum hashbrown 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e1de41fb8dba9714efd92241565cdff73f78508c95697dd56787d3cba27e2353"
+"checksum hashbrown 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9529213c67695ca2d146e6f263b7b72df8fa973368beadf767e8ed80c03f2f36"
 "checksum libc 0.2.56 (git+https://github.com/rust-wii/libc.git?branch=wii)" = "<none>"
 "checksum libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)" = "6281b86796ba5e4366000be6e9e18bf35580adf9e63fbe2294aadb587613a319"
 "checksum ogc-sys 0.1.0 (git+https://github.com/rust-wii/ogc-rs.git)" = "<none>"
