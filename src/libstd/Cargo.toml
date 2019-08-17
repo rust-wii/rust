@@ -22,7 +22,7 @@ crate-type = ["dylib", "rlib"]
 panic_unwind = { path = "../libpanic_unwind", optional = true }
 panic_abort = { path = "../libpanic_abort" }
 unwind = { path = "../libunwind" }
-hashbrown = { version = "0.4.0", features = ['rustc-dep-of-std'] }
+hashbrown = { version = "0.5.0", features = ['rustc-dep-of-std'] }
 
 [dependencies.backtrace]
 version = "0.3.32"
